@@ -98,7 +98,7 @@
         .loading-bar span { display: block; width: 0%; height: 100%; background: linear-gradient(90deg, var(--brand-red) 0%, #ff4d5e 100%); box-shadow: 0 0 10px var(--brand-red); border-radius: 10px; transition: width 0.2s ease; }
         .splash-hidden { transform: translateY(-100%); pointer-events: none; }
 
-        /* ================= الهيدر الداخلي ================= */
+        /* ================= الهيدر وشريط حالة الاستكفاء ================= */
         .sticky-wrapper { position: sticky; top: 0; z-index: 1000; background: var(--header-bg); border-bottom: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); }
         header { display: flex; flex-direction: column; align-items: center; padding: 14px 0 10px 0; position: relative; }
         .header-top { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
@@ -113,11 +113,12 @@
             border-radius: 10px;
         }
 
+        /* شريط حالة الأوردرات (مفتوح / مكتمل 25 أوردر) */
         .store-status-banner {
             width: 100%;
             text-align: center;
-            padding: 6px 10px;
-            font-size: 0.78rem;
+            padding: 8px 12px;
+            font-size: 0.8rem;
             font-weight: 800;
             display: flex;
             align-items: center;
@@ -126,7 +127,7 @@
         }
 
         .store-status-banner.open { background: #dcfce7; color: #15803d; border-bottom: 1px solid #bbf7d0; }
-        .store-status-banner.closed { background: #fef3c7; color: #b45309; border-bottom: 1px solid #fde68a; }
+        .store-status-banner.soldout { background: #fee2e2; color: #991b1b; border-bottom: 1px solid #fca5a5; }
 
         .work-hours-badge {
             display: inline-flex;
@@ -180,86 +181,24 @@
         .badge { position: absolute; top: -3px; right: -3px; background: var(--brand-red); color: #ffffff; font-size: 8px; font-weight: 800; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff; transform: scale(0); }
         .badge.show { transform: scale(1); }
 
-        /* ================= شريط الأقسام المطور والمتناسق ================= */
-        .category-nav { 
-            display: flex; 
-            overflow-x: auto; 
-            white-space: nowrap; 
-            padding: 12px 16px; 
-            gap: 16px; 
-            scrollbar-width: none; 
-            background: var(--header-bg); 
-            border-bottom: 1px solid var(--border-color); 
-        }
+        /* ================= شريط الأقسام ================= */
+        .category-nav { display: flex; overflow-x: auto; white-space: nowrap; padding: 12px 16px; gap: 16px; scrollbar-width: none; background: var(--header-bg); border-bottom: 1px solid var(--border-color); }
         .category-nav::-webkit-scrollbar { display: none; }
-        
-        .cat-item { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            width: 85px; 
-            flex-shrink: 0;
-            cursor: pointer; 
-        }
-        
-        .cat-img-box { 
-            width: 68px; 
-            height: 68px; 
-            border-radius: 20px; 
-            background: var(--input-bg); 
-            overflow: hidden; 
-            border: 1.5px solid var(--border-color); 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .cat-item { display: flex; flex-direction: column; align-items: center; width: 85px; flex-shrink: 0; cursor: pointer; }
+        .cat-img-box { width: 68px; height: 68px; border-radius: 20px; background: var(--input-bg); overflow: hidden; border: 1.5px solid var(--border-color); display: flex; align-items: center; justify-content: center; }
         .cat-img-box img { width: 100%; height: 100%; object-fit: cover; }
         .cat-item.active .cat-img-box { border-color: var(--brand-red); border-width: 2.5px; transform: scale(1.04); }
         
         .cat-item span { 
-            font-size: 0.74rem; 
-            font-weight: 800; 
-            color: var(--desc-text); 
-            margin-top: 6px; 
-            text-align: center;
-            width: 100%;
-            white-space: normal;
-            word-wrap: break-word;
-            line-height: 1.2;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            font-size: 0.74rem; font-weight: 800; color: var(--desc-text); margin-top: 6px; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
         } 
         .cat-item.active span { color: var(--main-text); font-weight: 900; }
 
-        /* ================= قائمة الكروت وإعادة السعر لأصله ================= */
+        /* ================= قائمة الكروت ================= */
         .menu-list { display: flex; flex-direction: column; gap: 12px; padding: 16px; max-width: 600px; margin: auto; min-height: 400px; }
-        
-        .food-card { 
-            background: var(--card-inner-bg); 
-            border-radius: 16px; 
-            display: flex; 
-            flex-direction: column; 
-            padding: 10px; 
-            box-shadow: var(--card-shadow); 
-            border: 1px solid var(--card-outer-border); 
-            gap: 6px; 
-            position: relative; 
-        }
-
+        .food-card { background: var(--card-inner-bg); border-radius: 16px; display: flex; flex-direction: column; padding: 10px; box-shadow: var(--card-shadow); border: 1px solid var(--card-outer-border); gap: 6px; position: relative; }
         .card-top-content { display: flex; flex-direction: row; align-items: flex-start; gap: 10px; width: 100%; }
-        
-        .card-image-wrapper { 
-            width: 95px; 
-            height: 95px; 
-            border-radius: 12px; 
-            overflow: hidden; 
-            flex-shrink: 0; 
-            background: var(--card-inner-bg); 
-            border: 1px solid var(--card-outer-border); 
-        }
-        
+        .card-image-wrapper { width: 95px; height: 95px; border-radius: 12px; overflow: hidden; flex-shrink: 0; background: var(--card-inner-bg); border: 1px solid var(--card-outer-border); }
         .food-card .item-img { width: 100%; height: 100%; object-fit: cover; }
         .card-details-wrapper { display: flex; flex-direction: column; gap: 2px; text-align: right; flex: 1; min-width: 0; }
 
@@ -270,43 +209,25 @@
         .food-name { font-weight: 800; font-size: 1rem; color: var(--card-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .food-ingredients { font-size: 0.68rem; color: var(--card-desc-text); font-weight: 600; line-height: 1.3; display: block; }
 
-        /* عدّاد القطع الأصلي */
         .piece-counter-box { display: flex; align-items: center; justify-content: space-between; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 3px 6px; margin-top: 6px; width: 100%; }
         .piece-btn { background: var(--brand-red); color: #ffffff; border: none; width: 28px; height: 28px; border-radius: 8px; font-size: 1rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .piece-count-text { font-size: 0.8rem; font-weight: 800; color: var(--main-text); }
 
-        /* الجزء السفلي للكارت: السعر الأصلي على اليسار والزرار على اليمين */
-        .card-bottom-content { 
-            display: flex; 
-            flex-direction: row-reverse; 
-            justify-content: space-between; 
-            align-items: center; 
-            width: 100%; 
-            margin-top: 4px; 
-            padding-top: 6px; 
-            border-top: 1px solid var(--border-color); 
-        }
-
+        .card-bottom-content { display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: center; width: 100%; margin-top: 4px; padding-top: 6px; border-top: 1px solid var(--border-color); }
         .btn-wrapper { display: flex; align-items: center; margin-right: auto; }
 
         .add-btn { 
-            background: var(--brand-red); 
-            color: #ffffff; 
-            border: 1px solid transparent; 
-            padding: 0 12px;
-            height: 34px; 
-            border-radius: 8px; 
-            font-size: 0.82rem; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-weight: 800; 
-            box-shadow: 0 3px 8px rgba(255, 0, 21, 0.25);
-            white-space: nowrap;
+            background: var(--brand-red); color: #ffffff; border: 1px solid transparent; padding: 0 12px; height: 34px; border-radius: 8px; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 800; box-shadow: 0 3px 8px rgba(255, 0, 21, 0.25); white-space: nowrap;
         }
 
-        .add-btn.preorder-mode { background: #d97706 !important; box-shadow: 0 3px 8px rgba(217, 119, 6, 0.3) !important; }
+        /* ستايل زر حالة نفاد الكمية */
+        .add-btn.disabled-btn {
+            background: #94a3b8 !important;
+            box-shadow: none !important;
+            cursor: not-allowed !important;
+            opacity: 0.7;
+        }
+
         .add-btn.success-state { background: #dcfce7 !important; color: #15803d !important; border: 1.5px solid #16a34a !important; pointer-events: none; }
 
         .price-container-leftish { display: flex; align-items: center; margin-left: auto; padding-right: 2px; }
@@ -334,19 +255,7 @@
         .cart-item-price { color: var(--brand-red); font-weight: 800; font-size: 0.8rem; display: block; }
         .remove-btn { color: #ef4444; font-weight: 800; font-size: 0.75rem; cursor: pointer; padding: 4px; }
         
-        .user-fields input, .user-fields textarea { 
-            background: var(--input-bg); 
-            border: 1px solid var(--border-color); 
-            padding: 11px 12px; 
-            border-radius: 10px; 
-            width: 100%; 
-            margin-bottom: 8px; 
-            color: var(--main-text); 
-            text-align: right; 
-            font-size: 0.82rem; 
-            font-weight: 700;
-        }
-
+        .user-fields input, .user-fields textarea { background: var(--input-bg); border: 1px solid var(--border-color); padding: 11px 12px; border-radius: 10px; width: 100%; margin-bottom: 8px; color: var(--main-text); text-align: right; font-size: 0.82rem; font-weight: 700; }
         .order-type-container { margin-bottom: 12px; text-align: right; }
         .order-type-title { font-size: 0.75rem; font-weight: 800; color: var(--desc-text); display: block; margin-bottom: 6px; }
         .order-type-toggle { display: flex; gap: 10px; width: 100%; }
@@ -354,7 +263,6 @@
         .type-btn.active { background: var(--brand-red); color: #ffffff; border-color: var(--brand-red); }
 
         .submit-btn { background: var(--brand-red); color: #ffffff; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 0, 21, 0.3); }
-        .submit-btn.preorder-mode { background: #d97706; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3); }
     </style>
 </head>
 <body>
@@ -370,6 +278,7 @@
     </div>
 
     <div class="sticky-wrapper">
+        <!-- شريط حالة الأوردرات والتحديث الفوري عند جميع المباشرين -->
         <div id="storeStatusBanner" class="store-status-banner open">
             <span id="statusIcon">🟢</span>
             <span id="statusText">المطعم مفتوح ويستقبل الطلبات الآن</span>
@@ -420,7 +329,7 @@
         </div>
     </footer>
 
-    <!-- نافذة السلة وإتمام الطلب / الحجز -->
+    <!-- نافذة السلة -->
     <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
         <div class="modal-content">
             <h3 id="modalTitle" style="margin-bottom: 12px; font-size: 1.05rem; font-weight: 800; color: var(--main-text);">تفاصيل طلبك 🍱</h3>
@@ -445,12 +354,6 @@
                 <input type="text" id="uName" placeholder="الاسم بالكامل">
                 <input type="tel" id="uPhone" placeholder="رقم الموبايل">
                 <input type="text" id="uAddr" placeholder="العنوان بالتفصيل (المنطقة / الشارع / الدور)">
-                
-                <div id="preOrderTimeBox" style="display: none; margin-bottom: 8px;">
-                    <label style="font-size:0.75rem; font-weight:800; color:var(--brand-red); display:block; margin-bottom:4px;">📅 وقت وتاريخ الاستلام المتوقع:</label>
-                    <input type="text" id="uDeliveryTime" placeholder="مثال: غداً الساعة 4 عصراً">
-                </div>
-
                 <textarea id="uNotes" rows="2" placeholder="ملاحظات الطلب (مثال: زيادات خاصة، تفاصيل إضافية)"></textarea>
             </div>
             <button class="submit-btn" id="submitOrderBtn" onclick="sendToWA()">تأكيد الطلب عبر واتساب 🍣</button>
@@ -464,54 +367,8 @@
         let itemPieceCounts = {}; 
         let currentTotal = 0; 
         let selectedOrderType = 'دليفري'; 
-        let isStoreOpen = true; 
-
-        function checkStoreHours() {
-            const now = new Date();
-            const day = now.getDay(); 
-            const hour = now.getHours(); 
-
-            if (day === 5) {
-                isStoreOpen = false;
-            } else if (hour >= 15 && hour < 23) {
-                isStoreOpen = true;
-            } else {
-                isStoreOpen = false;
-            }
-
-            updateStoreUI();
-        }
-
-        function updateStoreUI() {
-            const banner = document.getElementById('storeStatusBanner');
-            const statusIcon = document.getElementById('statusIcon');
-            const statusText = document.getElementById('statusText');
-            const preOrderBox = document.getElementById('preOrderTimeBox');
-            const submitBtn = document.getElementById('submitOrderBtn');
-            const modalTitle = document.getElementById('modalTitle');
-
-            if (isStoreOpen) {
-                banner.className = 'store-status-banner open';
-                statusIcon.innerText = '🟢';
-                statusText.innerText = 'المطعم مفتوح ويستقبل الطلبات الآن';
-                if(preOrderBox) preOrderBox.style.display = 'none';
-                if(submitBtn) {
-                    submitBtn.classList.remove('preorder-mode');
-                    submitBtn.innerText = 'تأكيد الطلب عبر واتساب 🍣';
-                }
-                if(modalTitle) modalTitle.innerText = 'تفاصيل طلبك 🍱';
-            } else {
-                banner.className = 'store-status-banner closed';
-                statusIcon.innerText = '🔴';
-                statusText.innerText = 'المحل مغلق حالياً - يمكنك عمل حجز مسبق لطلبك الآن 📅';
-                if(preOrderBox) preOrderBox.style.display = 'block';
-                if(submitBtn) {
-                    submitBtn.classList.add('preorder-mode');
-                    submitBtn.innerText = 'تأكيد الحجز المسبق عبر واتساب 📅';
-                }
-                if(modalTitle) modalTitle.innerText = 'تفاصيل الحجز المسبق 📅';
-            }
-        }
+        let isDailyCapacityReached = false; // متغير حالة وصول الـ 25 أوردر
+        let lastRawCSVText = "";
 
         function handleThemeToggle() {
             const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
@@ -523,7 +380,6 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            checkStoreHours();
             const savedTheme = localStorage.getItem('theme_preference') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
             const icon = document.getElementById('themeIcon');
@@ -532,8 +388,29 @@
             const themeBtn = document.getElementById('themeToggleBtn');
             if (themeBtn) themeBtn.addEventListener('click', handleThemeToggle);
 
-            loadMenu();
+            loadMenu(true);
+
+            // المزامنة اللحظية الفورية كل 3 ثوانٍ لمعرفة إذا اكتمل الـ 25 اوردر
+            setInterval(() => {
+                checkAutoRefresh();
+            }, 3000);
         });
+
+        function updateCapacityUI() {
+            const banner = document.getElementById('storeStatusBanner');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusText = document.getElementById('statusText');
+
+            if (isDailyCapacityReached) {
+                banner.className = 'store-status-banner soldout';
+                statusIcon.innerText = '🔴';
+                statusText.innerText = 'عذراً، تم وصول الحد الأقصى للطلبات اليوم (25/25) لضمان طزاجة الأكل! ننتظركم غداً 🍣';
+            } else {
+                banner.className = 'store-status-banner open';
+                statusIcon.innerText = '🟢';
+                statusText.innerText = 'المطعم مفتوح ويستقبل الطلبات الآن';
+            }
+        }
 
         function setOrderType(type) {
             selectedOrderType = type;
@@ -568,34 +445,61 @@
             return parseFloat(cleanStr) || 0;
         }
 
-        async function loadMenu() {
+        async function loadMenu(isInitial = false) {
             const counterEl = document.getElementById('loadCounter');
             const progressEl = document.getElementById('loadProgress');
             
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += 25;
-                if(counterEl) counterEl.innerText = `${progress}%`;
-                if(progressEl) progressEl.style.width = `${progress}%`;
-                if(progress >= 100) clearInterval(progressInterval);
-            }, 100);
+            if(isInitial) {
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 25;
+                    if(counterEl) counterEl.innerText = `${progress}%`;
+                    if(progressEl) progressEl.style.width = `${progress}%`;
+                    if(progress >= 100) clearInterval(progressInterval);
+                }, 100);
+            }
 
             try {
                 const res = await fetch(`${csvUrl}&t=${Date.now()}`, { cache: "no-store" });
                 if (!res.ok) throw new Error();
                 const data = await res.text();
+                lastRawCSVText = data;
                 processCSVData(data);
             } catch (e) {
                 console.log("Error loading CSV", e);
             } finally {
-                setTimeout(() => {
-                    const splash = document.getElementById('splash-screen');
-                    if(splash) splash.classList.add('splash-hidden');
-                }, 500);
+                if(isInitial) {
+                    setTimeout(() => {
+                        const splash = document.getElementById('splash-screen');
+                        if(splash) splash.classList.add('splash-hidden');
+                    }, 500);
+                }
             }
         }
 
+        async function checkAutoRefresh() {
+            try {
+                const res = await fetch(`${csvUrl}&t=${Date.now()}`, { cache: "no-store" });
+                if (!res.ok) return;
+                const data = await res.text();
+                if (data !== lastRawCSVText) {
+                    lastRawCSVText = data;
+                    processCSVData(data);
+                }
+            } catch (e) {}
+        }
+
         function processCSVData(csvData) {
+            // فحص هل كتب صاحب المطعم كلمة (مكتمل / استكفاء / 25) في أول الشيت لتأكيد اكتمال الـ 25 أوردر
+            const lowerData = csvData.toLowerCase();
+            if (lowerData.includes("مكتمل") || lowerData.includes("استكفى") || lowerData.includes("soldout") || lowerData.includes("اكتمل")) {
+                isDailyCapacityReached = true;
+            } else {
+                isDailyCapacityReached = false;
+            }
+
+            updateCapacityUI();
+
             const rows = csvData.split(/\r?\n/).slice(1);
             menuData = rows.map((row, idx) => {
                 if(!row.trim()) return null;
@@ -621,9 +525,7 @@
 
             document.getElementById('catNav').innerHTML = categories.map((catName) => `
                 <div class="cat-item ${currentActiveCat === catName ? 'active' : ''}" onclick="filterCat('${catName}', this)">
-                    <div class="cat-img-box">
-                        <img src="${IMAGES_PATH}${catName}.jpg" onerror="this.onerror=null; this.src='${IMAGES_PATH}default.jpg';">
-                    </div>
+                    <div class="cat-img-box"><img src="${IMAGES_PATH}${catName}.jpg" onerror="this.onerror=null; this.src='${IMAGES_PATH}default.jpg';"></div>
                     <span>${catName}</span>
                 </div>
             `).join('');
@@ -637,6 +539,7 @@
         }
 
         function changePieceCount(itemId, unitPrice, delta) {
+            if (isDailyCapacityReached) return;
             if (!itemPieceCounts[itemId]) itemPieceCounts[itemId] = 1;
             itemPieceCounts[itemId] += delta;
             if (itemPieceCounts[itemId] < 1) itemPieceCounts[itemId] = 1;
@@ -680,8 +583,9 @@
                 const initialPrice = !isFixed ? (item.price * currentCount) : item.price;
                 const initialSize = !isFixed ? `${currentCount} قطعة` : '';
                 
-                const btnLabel = isStoreOpen ? "اطلب 🍱" : "حجز مسبق 📅";
-                const btnClass = isStoreOpen ? "add-btn" : "add-btn preorder-mode";
+                // التحكم بزرار الطلب عند الوصول للحد الأقصى 25
+                const btnLabel = isDailyCapacityReached ? "استكفينا اليوم 🚫" : "اطلب 🍱";
+                const btnClass = isDailyCapacityReached ? "add-btn disabled-btn" : "add-btn";
 
                 return `
                 <div class="food-card ${isFixed ? 'large-food-card' : ''}" id="card-${item.id}">
@@ -697,7 +601,7 @@
                     </div>
                     <div class="card-bottom-content">
                         <div class="btn-wrapper">
-                            <button class="${btnClass}" id="btn-${item.id}" data-price="${initialPrice}" data-size="${initialSize}" onclick="triggerAddToCart(event, this, '${item.name.replace(/'/g, "\\'")}')">
+                            <button class="${btnClass}" id="btn-${item.id}" data-price="${initialPrice}" data-size="${initialSize}" ${isDailyCapacityReached ? 'disabled' : ''} onclick="triggerAddToCart(event, this, '${item.name.replace(/'/g, "\\'")}')">
                                 ${btnLabel}
                             </button>
                         </div>
@@ -713,6 +617,11 @@
         }
 
         function triggerAddToCart(e, btn, name) {
+            if (isDailyCapacityReached) {
+                alert("عذراً، اكتمل عدد طلبات اليوم (25 أوردر). ننتظركم غداً طازجاً!");
+                return;
+            }
+
             const price = btn.getAttribute('data-price') || "0"; 
             const size = btn.getAttribute('data-size');
             let displayName = name + (size ? ` (${size})` : '');
@@ -724,7 +633,7 @@
             
             setTimeout(() => { 
                 btn.classList.remove('success-state'); 
-                btn.innerText = isStoreOpen ? "اطلب 🍱" : "حجز مسبق 📅"; 
+                btn.innerText = "اطلب 🍱"; 
             }, 1500);
 
             updateCart();
@@ -746,23 +655,20 @@
         function toggleCart(s) { const modal = document.getElementById('cartModal'); if(!modal) return; if (s) { modal.style.display = 'flex'; history.pushState({ cartOpen: true }, ""); } else { modal.style.display = 'none'; } }
 
         function sendToWA() {
+            if (isDailyCapacityReached) {
+                alert("عذراً، اكتمل عدد طلبات اليوم بالكامل. يمكنك الطلب غداً!");
+                return;
+            }
+
             const n = document.getElementById('uName').value.trim();
             const p = document.getElementById('uPhone').value.trim();
             const a = document.getElementById('uAddr').value.trim();
             const notes = document.getElementById('uNotes') ? document.getElementById('uNotes').value.trim() : "";
-            const delTime = document.getElementById('uDeliveryTime') ? document.getElementById('uDeliveryTime').value.trim() : "";
 
             if(!n || !p || cart.length === 0) { alert("برجاء إدخال اسمك ورقم تليفونك أولاً لتأكيد طلبك."); return; }
             if (selectedOrderType === "دليفري" && !a) { alert("برجاء كتابة عنوانك بالتفصيل."); return; }
 
-            let msg = "";
-            if (isStoreOpen) {
-                msg += `*طلب جديد - Mizo Sushi 🍣*\n──────────────\n`;
-            } else {
-                msg += `*📅 طلب حجز مسبق (خارج مواعيد العمل)*\n*المطعم مغلق حالياً*\n──────────────\n`;
-                if(delTime) msg += `⏰ *وقت/تاريخ الاستلام المطلوب:* ${delTime}\n`;
-            }
-
+            let msg = `*طلب جديد - Mizo Sushi 🍣*\n──────────────\n`;
             msg += `👤 *الاسم:* ${n}\n📱 *الموبايل:* ${p}\n🛵 *نوع الطلب:* ${selectedOrderType}\n`;
             if (selectedOrderType === "دليفري") msg += `📍 *العنوان:* ${a}\n`;
             
