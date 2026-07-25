@@ -390,6 +390,7 @@
 
             loadMenu(true);
 
+            // المزامنة الفورية مع كسر كاش سيرفرات جوجل كل 3 ثوانٍ
             setInterval(() => {
                 checkAutoRefresh();
             }, 3000);
@@ -455,6 +456,13 @@
             return parseFloat(cleanStr) || 0;
         }
 
+        // دالة كسر الكاش لمنع جوجل من إعادة النسخ القديمة
+        function getFreshCsvUrl() {
+            const uniqueTime = Date.now();
+            const randomNum = Math.floor(Math.random() * 100000);
+            return `${csvUrl}&nocache=${uniqueTime}_${randomNum}`;
+        }
+
         async function loadMenu(isInitial = false) {
             const counterEl = document.getElementById('loadCounter');
             const progressEl = document.getElementById('loadProgress');
@@ -470,7 +478,7 @@
             }
 
             try {
-                const res = await fetch(`${csvUrl}&t=${Date.now()}`, { cache: "no-store" });
+                const res = await fetch(getFreshCsvUrl(), { cache: "no-store", headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } });
                 if (!res.ok) throw new Error();
                 const data = await res.text();
                 lastRawCSVText = data;
@@ -489,9 +497,11 @@
 
         async function checkAutoRefresh() {
             try {
-                const res = await fetch(`${csvUrl}&t=${Date.now()}`, { cache: "no-store" });
+                const res = await fetch(getFreshCsvUrl(), { cache: "no-store", headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } });
                 if (!res.ok) return;
                 const data = await res.text();
+                
+                // التحديث الفوري المباشر فقط في حالة وجود اختلاف في البيانات الشيت الفعلية الحية
                 if (data !== lastRawCSVText) {
                     lastRawCSVText = data;
                     processCSVData(data);
@@ -502,7 +512,7 @@
         function processCSVData(csvData) {
             const lowerData = csvData.toLowerCase();
             
-            // إعادة تقييم صريحة ودقيقة للحالة في كل قراءة للشيت
+            // فحص وجود أي من الكلمات المحددة بشكل صريح ودقيق
             const hasKeyword = lowerData.includes("استكفى") || 
                                lowerData.includes("استكفينا") || 
                                lowerData.includes("مكتمل") || 
@@ -510,9 +520,10 @@
                                lowerData.includes("soldout") || 
                                lowerData.includes("مغلق");
 
-            // تحويل ديناميكي كامل (تأكيد الفتح أو الغلق)
+            const previousState = isDailyCapacityReached;
             isDailyCapacityReached = hasKeyword;
 
+            // تحديث الشاشة فقط إذا تغيرت حالة الاستكفاء لتجنب التهنيج
             updateCapacityUI();
 
             const rows = csvData.split(/\r?\n/).slice(1);
@@ -598,7 +609,6 @@
                 const initialPrice = !isFixed ? (item.price * currentCount) : item.price;
                 const initialSize = !isFixed ? `${currentCount} قطعة` : '';
                 
-                // تحديد النص والستايل تلقائياً ولحظياً بناءً على الحالة الحالية
                 const btnLabel = isDailyCapacityReached ? "استكفينا اليوم 🚫" : "اطلب 🍱";
                 const btnClass = isDailyCapacityReached ? "add-btn disabled-btn" : "add-btn";
 
