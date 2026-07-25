@@ -130,7 +130,6 @@
         }
 
         .store-status-banner.open { background: #dcfce7; color: #15803d; border-bottom: 1px solid #bbf7d0; }
-        .store-status-banner.closed { background: #fee2e2; color: #991b1b; border-bottom: 1px solid #fecaca; }
 
         .work-hours-badge {
             display: inline-flex;
@@ -381,20 +380,68 @@
 
         .submit-btn { background: var(--brand-red); color: #ffffff; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 0, 21, 0.3); }
 
-        /* نافذة التحكم بالباسوورد */
+        /* نافذة التحكم بالأصناف للـ Admin */
         .admin-modal-content {
             background: var(--card-inner-bg);
-            padding: 22px;
-            border-radius: 16px;
-            width: 88%;
-            max-width: 340px;
+            padding: 20px;
+            border-radius: 20px;
+            width: 92%;
+            max-width: 440px;
             margin: auto;
             border: 1px solid var(--border-color);
             text-align: center;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
         }
+        
+        .admin-items-list {
+            overflow-y: auto;
+            max-height: 60vh;
+            margin: 12px 0;
+            padding-left: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .admin-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--input-bg);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .admin-item-name {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--main-text);
+            text-align: right;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-left: 10px;
+        }
+
+        .admin-toggle-btn {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        
+        .admin-toggle-btn.btn-in-stock { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .admin-toggle-btn.btn-out-stock { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
         .admin-btn { padding: 10px; margin: 5px 0; border: none; border-radius: 8px; width: 100%; font-weight: 800; cursor: pointer; font-size: 0.88rem; }
         .admin-btn-open { background: #2e7d32; color: #fff; }
-        .admin-btn-close { background: #c62828; color: #fff; }
         .admin-btn-cancel { background: #555; color: #fff; }
     </style>
 </head>
@@ -496,7 +543,7 @@
         </div>
     </div>
 
-    <!-- نافذة التحكم السريعة بالباسوورد -->
+    <!-- نافذة التحكم بالأصناف للـ Admin -->
     <div class="modal" id="adminModal" style="align-items: center;" onclick="if(event.target==this) closeAdminModal()">
         <div class="admin-modal-content">
             <div id="adminLoginStep">
@@ -507,10 +554,14 @@
             </div>
 
             <div id="adminControlStep" style="display: none;">
-                <h3 style="margin-bottom: 12px; font-size: 1rem;">تحديث حالة المطعم اللحظية</h3>
-                <button class="admin-btn admin-btn-open" onclick="setStoreStatusInFirebase('open')">مفتوح ✅</button>
-                <button class="admin-btn admin-btn-close" onclick="setStoreStatusInFirebase('closed')">نفدت الكمية 🚫</button>
-                <button class="admin-btn admin-btn-cancel" onclick="closeAdminModal()" style="margin-top: 10px;">إغلاق</button>
+                <h3 style="margin-bottom: 6px; font-size: 1rem;">التحكم في توفر الأصناف 🍣</h3>
+                <p style="font-size: 0.72rem; color: var(--desc-text); margin-bottom: 8px;">اضغط على الزرار أمام الصنف لتبديل حالته فوراً عند الزباين</p>
+                
+                <div class="admin-items-list" id="adminItemsContainer">
+                    <!-- تتولد الأصناف هنا آلياً -->
+                </div>
+
+                <button class="admin-btn admin-btn-cancel" onclick="closeAdminModal()" style="margin-top: 5px;">إغلاق اللوحة</button>
             </div>
         </div>
     </div>
@@ -539,36 +590,26 @@
         let itemPieceCounts = {}; 
         let currentTotal = 0; 
         let selectedOrderType = 'دليفري'; 
-        let isStoreOpen = true; 
+        let itemsStockStatus = {}; // تخزين حالة الأصناف من الفايربيس
 
-        // ================= 2. الاستماع اللحظي لتغييرات Firebase =================
-        db.ref('restaurant_status').on('value', (snapshot) => {
-            const status = snapshot.val() || 'open';
-            isStoreOpen = (status === 'open');
-            updateStoreUI();
+        // تنظيف اسم الصنف لاستخدامه كـ Key في الفايربيس
+        function cleanKey(name) {
+            return name.replace(/[.#$\[\]]/g, "_");
+        }
+
+        // ================= 2. الاستماع اللحظي لتغييرات Firebase على مستوى كل صنف =================
+        db.ref('items_stock').on('value', (snapshot) => {
+            itemsStockStatus = snapshot.val() || {};
             if (menuData.length > 0) {
                 const activeCatDOM = document.querySelector('.cat-item.active span');
                 if (activeCatDOM) filterCat(activeCatDOM.innerText);
             }
+            if (document.getElementById('adminControlStep').style.display === 'block') {
+                renderAdminItemsList();
+            }
         });
 
-        function updateStoreUI() {
-            const banner = document.getElementById('storeStatusBanner');
-            const statusIcon = document.getElementById('statusIcon');
-            const statusText = document.getElementById('statusText');
-
-            if (isStoreOpen) {
-                if(banner) banner.className = 'store-status-banner open';
-                if(statusIcon) statusIcon.innerText = '🟢';
-                if(statusText) statusText.innerText = 'المطعم مفتوح ويستقبل الطلبات الآن';
-            } else {
-                if(banner) banner.className = 'store-status-banner closed';
-                if(statusIcon) statusIcon.innerText = '🔴';
-                if(statusText) statusText.innerText = 'عذراً، نفدت الكمية لهذا اليوم 🚫';
-            }
-        }
-
-        // ================= 3. لوحة التحكم (الرقم السري) =================
+        // ================= 3. لوحة التحكم للأصناف =================
         function openAdminModal() {
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminLoginStep').style.display = 'block';
@@ -585,19 +626,41 @@
             if (input === SECRET_PIN) {
                 document.getElementById('adminLoginStep').style.display = 'none';
                 document.getElementById('adminControlStep').style.display = 'block';
+                renderAdminItemsList();
             } else {
                 alert('الرقم السري غير صحيح!');
             }
         }
 
-        function setStoreStatusInFirebase(status) {
-            db.ref('restaurant_status').set(status)
-                .then(() => {
-                    alert('تم تغيير حالة المطعم بنجاح وسيبان عند كل الزباين فوري!');
-                    closeAdminModal();
-                })
+        function renderAdminItemsList() {
+            const container = document.getElementById('adminItemsContainer');
+            if (!container) return;
+
+            container.innerHTML = menuData.map(item => {
+                const itemKey = cleanKey(item.name);
+                const isOutOfStock = (itemsStockStatus[itemKey] === 'out');
+                
+                const btnText = isOutOfStock ? "نفدت الكمية 🚫" : "متاح ✅";
+                const btnClass = isOutOfStock ? "btn-out-stock" : "btn-in-stock";
+                
+                return `
+                <div class="admin-item-row">
+                    <span class="admin-item-name">${item.name}</span>
+                    <button class="admin-toggle-btn ${btnClass}" onclick="toggleItemStock('${item.name}')">
+                        ${btnText}
+                    </button>
+                </div>`;
+            }).join('');
+        }
+
+        function toggleItemStock(itemName) {
+            const itemKey = cleanKey(itemName);
+            const currentStatus = itemsStockStatus[itemKey] || 'in';
+            const newStatus = (currentStatus === 'out') ? 'in' : 'out';
+
+            db.ref(`items_stock/${itemKey}`).set(newStatus)
                 .catch((err) => {
-                    alert('حدث خطأ: ' + err.message);
+                    alert('حدث خطأ أثناء الحفظ: ' + err.message);
                 });
         }
 
@@ -769,9 +832,13 @@
                 const initialPrice = !isFixed ? (item.price * currentCount) : item.price;
                 const initialSize = !isFixed ? `${currentCount} قطعة` : '';
                 
-                const btnLabel = isStoreOpen ? "اطلب 🍱" : "نفدت الكمية 🚫";
-                const btnClass = isStoreOpen ? "add-btn" : "add-btn out-of-stock-mode";
-                const disabledAttr = isStoreOpen ? "" : "disabled";
+                // فحص حالة توفر الصنف من الفايربيس
+                const itemKey = cleanKey(item.name);
+                const isOutOfStock = (itemsStockStatus[itemKey] === 'out');
+
+                const btnLabel = isOutOfStock ? "نفدت الكمية 🚫" : "اطلب 🍱";
+                const btnClass = isOutOfStock ? "add-btn out-of-stock-mode" : "add-btn";
+                const disabledAttr = isOutOfStock ? "disabled" : "";
 
                 return `
                 <div class="food-card ${isFixed ? 'large-food-card' : ''}" id="card-${item.id}">
@@ -804,7 +871,8 @@
 
         // ================= 6. السلة وإرسال الطلب للواتساب =================
         function triggerAddToCart(e, btn, name) {
-            if (!isStoreOpen) return; // حماية إضافية لو المطعم قفل
+            const itemKey = cleanKey(name);
+            if (itemsStockStatus[itemKey] === 'out') return;
 
             const price = btn.getAttribute('data-price') || "0"; 
             const size = btn.getAttribute('data-size');
