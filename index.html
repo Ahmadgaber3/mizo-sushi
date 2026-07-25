@@ -220,7 +220,6 @@
             background: var(--brand-red); color: #ffffff; border: 1px solid transparent; padding: 0 12px; height: 34px; border-radius: 8px; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 800; box-shadow: 0 3px 8px rgba(255, 0, 21, 0.25); white-space: nowrap;
         }
 
-        /* ستايل القفل النهائي لزرار استكفينا */
         .add-btn.disabled-btn {
             background: #64748b !important;
             box-shadow: none !important;
@@ -280,7 +279,6 @@
     </div>
 
     <div class="sticky-wrapper">
-        <!-- شريط حالة الأوردرات والتحديث الفوري عند جميع المستخدمين -->
         <div id="storeStatusBanner" class="store-status-banner open">
             <span id="statusIcon">🟢</span>
             <span id="statusText">المطعم مفتوح ويستقبل الطلبات الآن</span>
@@ -369,7 +367,7 @@
         let itemPieceCounts = {}; 
         let currentTotal = 0; 
         let selectedOrderType = 'دليفري'; 
-        let isDailyCapacityReached = false; // متغير حالة وصول الـ 25 أوردر
+        let isDailyCapacityReached = false; 
         let lastRawCSVText = "";
 
         function handleThemeToggle() {
@@ -392,7 +390,6 @@
 
             loadMenu(true);
 
-            // المزامنة اللحظية الفورية كل 3 ثوانٍ لمراقبة الشيت بدون توقف
             setInterval(() => {
                 checkAutoRefresh();
             }, 3000);
@@ -503,13 +500,18 @@
         }
 
         function processCSVData(csvData) {
-            // فحص دقيق وشامل لأي كلمة تدل على استكفاء الطلبات في الشيت بالكامل
             const lowerData = csvData.toLowerCase();
-            if (lowerData.includes("استكفى") || lowerData.includes("استكفينا") || lowerData.includes("مكتمل") || lowerData.includes("اكتمل") || lowerData.includes("soldout") || lowerData.includes("مغلق")) {
-                isDailyCapacityReached = true;
-            } else {
-                isDailyCapacityReached = false;
-            }
+            
+            // إعادة تقييم صريحة ودقيقة للحالة في كل قراءة للشيت
+            const hasKeyword = lowerData.includes("استكفى") || 
+                               lowerData.includes("استكفينا") || 
+                               lowerData.includes("مكتمل") || 
+                               lowerData.includes("اكتمل") || 
+                               lowerData.includes("soldout") || 
+                               lowerData.includes("مغلق");
+
+            // تحويل ديناميكي كامل (تأكيد الفتح أو الغلق)
+            isDailyCapacityReached = hasKeyword;
 
             updateCapacityUI();
 
@@ -596,7 +598,7 @@
                 const initialPrice = !isFixed ? (item.price * currentCount) : item.price;
                 const initialSize = !isFixed ? `${currentCount} قطعة` : '';
                 
-                // القفل القطعي والتثبيت الدائم لزرار الطلب في حالة الاستكفاء
+                // تحديد النص والستايل تلقائياً ولحظياً بناءً على الحالة الحالية
                 const btnLabel = isDailyCapacityReached ? "استكفينا اليوم 🚫" : "اطلب 🍱";
                 const btnClass = isDailyCapacityReached ? "add-btn disabled-btn" : "add-btn";
 
