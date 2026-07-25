@@ -368,7 +368,7 @@
         let currentTotal = 0; 
         let selectedOrderType = 'دليفري'; 
         let isDailyCapacityReached = false; 
-        let lastCSVDataString = "";
+        let clearConsecutiveCount = 0; // عداد التثبت لمنع الرمشة عند حذف كلمة استكفى
 
         function handleThemeToggle() {
             const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
@@ -390,10 +390,10 @@
 
             loadMenu(true);
 
-            // المزامنة الفحصية بدون إحداث رمشة كل 4 ثوانٍ
+            // المزامنة الدقيقة كل 5 ثوانٍ
             setInterval(() => {
                 checkAutoRefresh();
-            }, 4000);
+            }, 5000);
         });
 
         function updateCapacityUI() {
@@ -456,8 +456,10 @@
             return parseFloat(cleanStr) || 0;
         }
 
+        // كاسر كاش عشوائي مفرط ومطور لإجبار جوجل على إرسال النسخة الحية
         function getFreshCsvUrl() {
-            return `${csvUrl}&_t=${Date.now()}`;
+            const randomHash = Math.random().toString(36).substring(2, 9);
+            return `${csvUrl}&_cb=${Date.now()}_${randomHash}`;
         }
 
         async function loadMenu(isInitial = false) {
@@ -475,10 +477,9 @@
             }
 
             try {
-                const res = await fetch(getFreshCsvUrl(), { cache: "no-store" });
+                const res = await fetch(getFreshCsvUrl(), { cache: "no-cache", headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } });
                 if (!res.ok) throw new Error();
                 const data = await res.text();
-                lastCSVDataString = data;
                 processCSVData(data);
             } catch (e) {
                 console.log("Error loading CSV", e);
@@ -494,29 +495,37 @@
 
         async function checkAutoRefresh() {
             try {
-                const res = await fetch(getFreshCsvUrl(), { cache: "no-store" });
+                const res = await fetch(getFreshCsvUrl(), { cache: "no-cache", headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } });
                 if (!res.ok) return;
                 const data = await res.text();
-                
-                // التحديث الفوري المباشر فقط في حالة تغير النص الفعلي في الشيت برمتها
-                if (data !== lastCSVDataString) {
-                    lastCSVDataString = data;
-                    processCSVData(data);
-                }
+                processCSVData(data);
             } catch (e) {}
         }
 
         function processCSVData(csvData) {
             const cleanData = csvData.replace(/\s+/g, ' ').toLowerCase();
             
-            // التحقق من وجود الكلمة بشكل صريح وقاطع
             const capacityKeywords = ["استكفى", "استكفينا", "مكتمل", "اكتمل", "soldout", "مغلق"];
             const hasCapacityKeyword = capacityKeywords.some(keyword => cleanData.includes(keyword));
 
-            const stateChanged = (isDailyCapacityReached !== hasCapacityKeyword);
-            isDailyCapacityReached = hasCapacityKeyword;
-
-            updateCapacityUI();
+            // خوارزمية منع الرمشة والتذبذب عند حذف كلمة أستكفى:
+            if (hasCapacityKeyword) {
+                // الكلمة موجودة = استكفاء فوري قاطع بدون انتظار
+                clearConsecutiveCount = 0;
+                if (!isDailyCapacityReached) {
+                    isDailyCapacityReached = true;
+                    updateCapacityUI();
+                    reRenderCurrentCategory();
+                }
+            } else {
+                // الكلمة غير موجودة = ننتظر تأكيدين متتاليين لمنع رفة الكاش
+                clearConsecutiveCount++;
+                if (clearConsecutiveCount >= 2 && isDailyCapacityReached) {
+                    isDailyCapacityReached = false;
+                    updateCapacityUI();
+                    reRenderCurrentCategory();
+                }
+            }
 
             const rows = csvData.split(/\r?\n/).slice(1);
             menuData = rows.map((row, idx) => {
@@ -532,7 +541,16 @@
                 return { id: idx, category, name, price: cleanPriceValue(rawPrice), desc };
             }).filter(Boolean);
 
-            if(menuData.length > 0) renderNav();
+            if(menuData.length > 0 && document.getElementById('catNav').children.length === 0) {
+                renderNav();
+            }
+        }
+
+        function reRenderCurrentCategory() {
+            const activeDOM = document.querySelector('.cat-item.active span');
+            if (activeDOM) {
+                filterCat(activeDOM.innerText);
+            }
         }
 
         function renderNav() {
