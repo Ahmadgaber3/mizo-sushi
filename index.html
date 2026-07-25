@@ -327,7 +327,7 @@
         .dev-credit { font-size: 0.72rem; color: var(--desc-text); font-weight: 700; }
         .dev-credit a { color: var(--brand-red); text-decoration: none; display: block; margin-top: 3px; }
 
-        /* زر الأدمين المخفي */
+        /* زر الأدمين المخفي (الترس ⚙️) */
         .admin-trigger {
             position: absolute;
             bottom: 10px;
@@ -337,7 +337,7 @@
             background: transparent;
             border: none;
             cursor: pointer;
-            opacity: 0.15;
+            opacity: 0.2;
             z-index: 999;
             font-size: 1.1rem;
         }
@@ -454,7 +454,7 @@
             <a href="tel:01030252806">📞 01030252806</a>
         </div>
 
-        <!-- زر الأدمين المخفي في الفوتر -->
+        <!-- زر الترس المخفي (⚙️) للتحكم -->
         <button class="admin-trigger" onclick="openAdminModal()">⚙️</button>
     </footer>
 
@@ -495,8 +495,8 @@
         </div>
     </div>
 
-    <!-- نافذة التحكم السريعة لفتح/إغلاق المطعم -->
-    <div class="modal" id="adminModal" style="align-items: center;">
+    <!-- نافذة التحكم السريعة بالباسوورد -->
+    <div class="modal" id="adminModal" style="align-items: center;" onclick="if(event.target==this) closeAdminModal()">
         <div class="admin-modal-content">
             <div id="adminLoginStep">
                 <h3 style="margin-bottom: 10px; font-size: 1rem;">لوحة التحكم بالمنيو</h3>
@@ -508,28 +508,28 @@
             <div id="adminControlStep" style="display: none;">
                 <h3 style="margin-bottom: 12px; font-size: 1rem;">تحديث حالة المطعم اللحظية</h3>
                 <button class="admin-btn admin-btn-open" onclick="setStoreStatusInFirebase('open')">مفتوح ✅</button>
-                <button class="admin-btn admin-btn-close" onclick="setStoreStatusInFirebase('closed')">مغلق ❌</button>
+                <button class="admin-btn admin-btn-close" onclick="setStoreStatusInFirebase('closed')">مغلق (نفدت الكمية) ❌</button>
                 <button class="admin-btn admin-btn-cancel" onclick="closeAdminModal()" style="margin-top: 10px;">إغلاق</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ================= 1. إعدادات Firebase اللحظية =================
+        // ================= 1. إعدادات Firebase الخاصة بك مدمجة بدقة =================
         const firebaseConfig = {
-            apiKey: "AIzaSyD...",
-            authDomain: "restaurant-menu-1bfc.firebaseapp.com",
-            databaseURL: "https://restaurant-menu-1bfc-default-rtdb.firebaseio.com",
-            projectId: "restaurant-menu-1bfc",
-            storageBucket: "restaurant-menu-1bfc.appspot.com",
-            messagingSenderId: "...",
-            appId: "..."
+            apiKey: "AIzaSyAyi3bQqd55atTlULXRTRm5HOuwJthlDaI",
+            authDomain: "restaurant-menu-1bfd7.firebaseapp.com",
+            databaseURL: "https://restaurant-menu-1bfd7-default-rtdb.firebaseio.com",
+            projectId: "restaurant-menu-1bfd7",
+            storageBucket: "restaurant-menu-1bfd7.firebasestorage.app",
+            messagingSenderId: "626018942432",
+            appId: "1:626018942432:web:674e7fb614275554713f85",
+            measurementId: "G-E7Z9ZLE7XC"
         };
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // متغيرات المنيو الأصلي
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlBBEwyuX_WljFEVeCSr_7-khsUJUw19uw_OZKtz9F16PFVbWZlZ8DSP7vsV9zAI_TwPm9FfgPkOUi/pub?output=csv';
         const IMAGES_PATH = "./images/"; 
         const SECRET_PIN = "100200";
@@ -540,7 +540,7 @@
         let selectedOrderType = 'دليفري'; 
         let isStoreOpen = true; 
 
-        // ================= 2. الربط اللحظي بـ Firebase =================
+        // ================= 2. الاستماع اللحظي لتغييرات Firebase =================
         db.ref('restaurant_status').on('value', (snapshot) => {
             const status = snapshot.val() || 'open';
             isStoreOpen = (status === 'open');
@@ -572,7 +572,7 @@
             } else {
                 if(banner) banner.className = 'store-status-banner closed';
                 if(statusIcon) statusIcon.innerText = '🔴';
-                if(statusText) statusText.innerText = 'المحل مغلق حالياً - يمكنك عمل حجز مسبق لطلبك الآن 📅';
+                if(statusText) statusText.innerText = 'المحل مغلق أو نفدت الكمية - يمكنك عمل حجز مسبق الآن 📅';
                 if(preOrderBox) preOrderBox.style.display = 'block';
                 if(submitBtn) {
                     submitBtn.classList.add('preorder-mode');
@@ -582,7 +582,7 @@
             }
         }
 
-        // ================= 3. لوحة التحكم بالرقم السري =================
+        // ================= 3. لوحة التحكم (الرقم السري) =================
         function openAdminModal() {
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminLoginStep').style.display = 'block';
@@ -607,7 +607,7 @@
         function setStoreStatusInFirebase(status) {
             db.ref('restaurant_status').set(status)
                 .then(() => {
-                    alert('تم تغيير حالة المطعم بنجاح!');
+                    alert('تم تغيير حالة المطعم بنجاح وسيبان عند كل الزباين فوري!');
                     closeAdminModal();
                 })
                 .catch((err) => {
@@ -615,7 +615,7 @@
                 });
         }
 
-        // ================= 4. المظهر العام (Theme) =================
+        // ================= 4. المظهر وتجهيز الصفحة =================
         function handleThemeToggle() {
             const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -637,7 +637,7 @@
             loadMenu();
         });
 
-        // ================= 5. جلب بيانات المنيو وتنسيقها =================
+        // ================= 5. جلب بيانات المنيو من الشيت =================
         function setOrderType(type) {
             selectedOrderType = type;
             const btnDel = document.getElementById('btnDelivery');
@@ -815,7 +815,7 @@
             }).join('');
         }
 
-        // ================= 6. السلة والواتساب =================
+        // ================= 6. السلة وإرسال الطلب للواتساب =================
         function triggerAddToCart(e, btn, name) {
             const price = btn.getAttribute('data-price') || "0"; 
             const size = btn.getAttribute('data-size');
@@ -863,7 +863,7 @@
             if (isStoreOpen) {
                 msg += `*طلب جديد - Mizo Sushi 🍣*\n──────────────\n`;
             } else {
-                msg += `*📅 طلب حجز مسبق (خارج مواعيد العمل)*\n*المطعم مغلق حالياً*\n──────────────\n`;
+                msg += `*📅 طلب حجز مسبق (المطعم مغلق / نفدت الكمية)*\n──────────────\n`;
                 if(delTime) msg += `⏰ *وقت/تاريخ الاستلام المطلوب:* ${delTime}\n`;
             }
 
