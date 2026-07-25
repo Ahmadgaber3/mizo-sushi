@@ -368,7 +368,7 @@
         let currentTotal = 0; 
         let selectedOrderType = 'دليفري'; 
         let isDailyCapacityReached = false; 
-        let lastRawCSVText = "";
+        let lastCSVDataString = "";
 
         function handleThemeToggle() {
             const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
@@ -390,10 +390,10 @@
 
             loadMenu(true);
 
-            // المزامنة الفورية مع كسر كاش سيرفرات جوجل كل 3 ثوانٍ
+            // المزامنة الفحصية بدون إحداث رمشة كل 4 ثوانٍ
             setInterval(() => {
                 checkAutoRefresh();
-            }, 3000);
+            }, 4000);
         });
 
         function updateCapacityUI() {
@@ -403,18 +403,18 @@
             const submitBtn = document.getElementById('submitOrderBtn');
 
             if (isDailyCapacityReached) {
-                banner.className = 'store-status-banner soldout';
-                statusIcon.innerText = '🔴';
-                statusText.innerText = 'عذراً، تم وصول الحد الأقصى للطلبات اليوم (25/25) لضمان طزاجة الأكل! ننتظركم غداً 🍣';
+                if(banner) banner.className = 'store-status-banner soldout';
+                if(statusIcon) statusIcon.innerText = '🔴';
+                if(statusText) statusText.innerText = 'عذراً، تم وصول الحد الأقصى للطلبات اليوم (25/25) لضمان طزاجة الأكل! ننتظركم غداً 🍣';
                 
                 if (submitBtn) {
                     submitBtn.innerText = 'استكفينا اليوم 🚫';
                     submitBtn.disabled = true;
                 }
             } else {
-                banner.className = 'store-status-banner open';
-                statusIcon.innerText = '🟢';
-                statusText.innerText = 'المطعم مفتوح ويستقبل الطلبات الآن';
+                if(banner) banner.className = 'store-status-banner open';
+                if(statusIcon) statusIcon.innerText = '🟢';
+                if(statusText) statusText.innerText = 'المطعم مفتوح ويستقبل الطلبات الآن';
                 
                 if (submitBtn) {
                     submitBtn.innerText = 'تأكيد الطلب عبر واتساب 🍣';
@@ -456,11 +456,8 @@
             return parseFloat(cleanStr) || 0;
         }
 
-        // دالة كسر الكاش لمنع جوجل من إعادة النسخ القديمة
         function getFreshCsvUrl() {
-            const uniqueTime = Date.now();
-            const randomNum = Math.floor(Math.random() * 100000);
-            return `${csvUrl}&nocache=${uniqueTime}_${randomNum}`;
+            return `${csvUrl}&_t=${Date.now()}`;
         }
 
         async function loadMenu(isInitial = false) {
@@ -478,10 +475,10 @@
             }
 
             try {
-                const res = await fetch(getFreshCsvUrl(), { cache: "no-store", headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } });
+                const res = await fetch(getFreshCsvUrl(), { cache: "no-store" });
                 if (!res.ok) throw new Error();
                 const data = await res.text();
-                lastRawCSVText = data;
+                lastCSVDataString = data;
                 processCSVData(data);
             } catch (e) {
                 console.log("Error loading CSV", e);
@@ -497,33 +494,28 @@
 
         async function checkAutoRefresh() {
             try {
-                const res = await fetch(getFreshCsvUrl(), { cache: "no-store", headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } });
+                const res = await fetch(getFreshCsvUrl(), { cache: "no-store" });
                 if (!res.ok) return;
                 const data = await res.text();
                 
-                // التحديث الفوري المباشر فقط في حالة وجود اختلاف في البيانات الشيت الفعلية الحية
-                if (data !== lastRawCSVText) {
-                    lastRawCSVText = data;
+                // التحديث الفوري المباشر فقط في حالة تغير النص الفعلي في الشيت برمتها
+                if (data !== lastCSVDataString) {
+                    lastCSVDataString = data;
                     processCSVData(data);
                 }
             } catch (e) {}
         }
 
         function processCSVData(csvData) {
-            const lowerData = csvData.toLowerCase();
+            const cleanData = csvData.replace(/\s+/g, ' ').toLowerCase();
             
-            // فحص وجود أي من الكلمات المحددة بشكل صريح ودقيق
-            const hasKeyword = lowerData.includes("استكفى") || 
-                               lowerData.includes("استكفينا") || 
-                               lowerData.includes("مكتمل") || 
-                               lowerData.includes("اكتمل") || 
-                               lowerData.includes("soldout") || 
-                               lowerData.includes("مغلق");
+            // التحقق من وجود الكلمة بشكل صريح وقاطع
+            const capacityKeywords = ["استكفى", "استكفينا", "مكتمل", "اكتمل", "soldout", "مغلق"];
+            const hasCapacityKeyword = capacityKeywords.some(keyword => cleanData.includes(keyword));
 
-            const previousState = isDailyCapacityReached;
-            isDailyCapacityReached = hasKeyword;
+            const stateChanged = (isDailyCapacityReached !== hasCapacityKeyword);
+            isDailyCapacityReached = hasCapacityKeyword;
 
-            // تحديث الشاشة فقط إذا تغيرت حالة الاستكفاء لتجنب التهنيج
             updateCapacityUI();
 
             const rows = csvData.split(/\r?\n/).slice(1);
@@ -657,8 +649,10 @@
             btn.innerText = "تم الإضافة ✔️";
             
             setTimeout(() => { 
-                btn.classList.remove('success-state'); 
-                btn.innerText = "اطلب 🍱"; 
+                if(!isDailyCapacityReached) {
+                    btn.classList.remove('success-state'); 
+                    btn.innerText = "اطلب 🍱"; 
+                }
             }, 1500);
 
             updateCart();
