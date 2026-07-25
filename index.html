@@ -237,7 +237,7 @@
         } 
         .cat-item.active span { color: var(--main-text); font-weight: 900; }
 
-        /* ================= قائمة الكروت ================= */
+        /* ================= قائمة الكروت وتعديل أبعاد الكارت الكبير ================= */
         .menu-list { display: flex; flex-direction: column; gap: 12px; padding: 16px; max-width: 600px; margin: auto; min-height: 400px; }
         
         .food-card { 
@@ -267,9 +267,24 @@
         .food-card .item-img { width: 100%; height: 100%; object-fit: cover; }
         .card-details-wrapper { display: flex; flex-direction: column; gap: 2px; text-align: right; flex: 1; min-width: 0; }
 
+        /* أبعاد الكارت الكبير بنسبة 600 في 270 بالضبط */
         .food-card.large-food-card .card-top-content { flex-direction: column; gap: 8px; }
-        .food-card.large-food-card .card-image-wrapper { width: 100%; height: auto; aspect-ratio: 4 / 3; border-radius: 12px; background: #121212; display: flex; align-items: center; justify-content: center; }
-        .food-card.large-food-card .item-img { object-fit: contain; }
+        .food-card.large-food-card .card-image-wrapper { 
+            width: 100%; 
+            aspect-ratio: 600 / 270; 
+            height: auto; 
+            border-radius: 12px; 
+            background: #121212; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden;
+        }
+        .food-card.large-food-card .item-img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
 
         .food-name { font-weight: 800; font-size: 1rem; color: var(--card-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .food-ingredients { font-size: 0.68rem; color: var(--card-desc-text); font-weight: 600; line-height: 1.3; display: block; }
@@ -594,7 +609,7 @@
     </div>
 
     <script>
-        // ================= 1. إعدادات Firebase الخاص بك =================
+        // ================= 1. إعدادات Firebase الخاصة بك =================
         const firebaseConfig = {
             apiKey: "AIzaSyAyi3bQqd55atTlULXRTRm5HOuwJthlDaI",
             authDomain: "restaurant-menu-1bfd7.firebaseapp.com",
