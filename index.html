@@ -130,6 +130,7 @@
         }
 
         .store-status-banner.open { background: #dcfce7; color: #15803d; border-bottom: 1px solid #bbf7d0; }
+        .store-status-banner.closed { background: #fee2e2; color: #991b1b; border-bottom: 1px solid #fecaca; }
 
         .work-hours-badge {
             display: inline-flex;
@@ -333,7 +334,7 @@
         .dev-credit { font-size: 0.72rem; color: var(--desc-text); font-weight: 700; }
         .dev-credit a { color: var(--brand-red); text-decoration: none; display: block; margin-top: 3px; }
 
-        /* زر الترس المخفي (⚙️) للتحكم */
+        /* زر الترس المخفي للتحكم */
         .admin-trigger {
             position: absolute;
             bottom: 10px;
@@ -380,7 +381,7 @@
 
         .submit-btn { background: var(--brand-red); color: #ffffff; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 0, 21, 0.3); }
 
-        /* نافذة التحكم بالأصناف للـ Admin */
+        /* ================= نافذة التحكم بالمنيو (Admin Modal) ================= */
         .admin-modal-content {
             background: var(--card-inner-bg);
             padding: 20px;
@@ -394,11 +395,31 @@
             display: flex;
             flex-direction: column;
         }
+
+        .global-control-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .global-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 800;
+            font-size: 0.82rem;
+            cursor: pointer;
+        }
+        .global-btn.open { background: #2e7d32; color: #fff; }
+        .global-btn.close { background: #c62828; color: #fff; }
         
         .admin-items-list {
             overflow-y: auto;
-            max-height: 60vh;
-            margin: 12px 0;
+            max-height: 50vh;
+            margin: 8px 0;
             padding-left: 5px;
             display: flex;
             flex-direction: column;
@@ -543,7 +564,7 @@
         </div>
     </div>
 
-    <!-- نافذة التحكم بالأصناف للـ Admin -->
+    <!-- نافذة التحكم الشاملة (Admin Modal) -->
     <div class="modal" id="adminModal" style="align-items: center;" onclick="if(event.target==this) closeAdminModal()">
         <div class="admin-modal-content">
             <div id="adminLoginStep">
@@ -554,12 +575,18 @@
             </div>
 
             <div id="adminControlStep" style="display: none;">
-                <h3 style="margin-bottom: 6px; font-size: 1rem;">التحكم في توفر الأصناف 🍣</h3>
-                <p style="font-size: 0.72rem; color: var(--desc-text); margin-bottom: 8px;">اضغط على الزرار أمام الصنف لتبديل حالته فوراً عند الزباين</p>
+                <h3 style="margin-bottom: 8px; font-size: 1rem;">التحكم في حالة المنيو ⚙️</h3>
                 
-                <div class="admin-items-list" id="adminItemsContainer">
-                    <!-- تتولد الأصناف هنا آلياً -->
+                <!-- التحكم العام بكل الأصناف -->
+                <div class="global-control-box">
+                    <button class="global-btn open" onclick="setGlobalStoreStatus('open')">فتح الكل ✅</button>
+                    <button class="global-btn close" onclick="setGlobalStoreStatus('closed')">قفل الكل (نفدت الكمية) 🚫</button>
                 </div>
+
+                <p style="font-size: 0.72rem; color: var(--desc-text); margin-bottom: 6px;">أو التحكم في توفر كل صنف بشكل منفصل:</p>
+                
+                <!-- قائمة الأصناف المنفردة -->
+                <div class="admin-items-list" id="adminItemsContainer"></div>
 
                 <button class="admin-btn admin-btn-cancel" onclick="closeAdminModal()" style="margin-top: 5px;">إغلاق اللوحة</button>
             </div>
@@ -567,7 +594,7 @@
     </div>
 
     <script>
-        // ================= 1. إعدادات Firebase الخاصة بك =================
+        // ================= 1. إعدادات Firebase الخاص بك =================
         const firebaseConfig = {
             apiKey: "AIzaSyAyi3bQqd55atTlULXRTRm5HOuwJthlDaI",
             authDomain: "restaurant-menu-1bfd7.firebaseapp.com",
@@ -590,26 +617,55 @@
         let itemPieceCounts = {}; 
         let currentTotal = 0; 
         let selectedOrderType = 'دليفري'; 
-        let itemsStockStatus = {}; // تخزين حالة الأصناف من الفايربيس
+        let isGlobalStoreOpen = true; 
+        let itemsStockStatus = {}; 
 
-        // تنظيف اسم الصنف لاستخدامه كـ Key في الفايربيس
         function cleanKey(name) {
             return name.replace(/[.#$\[\]]/g, "_");
         }
 
-        // ================= 2. الاستماع اللحظي لتغييرات Firebase على مستوى كل صنف =================
+        // ================= 2. الاستماع اللحظي لـ Firebase =================
+        // استماع للحالة العامة للمطعم
+        db.ref('global_restaurant_status').on('value', (snapshot) => {
+            const status = snapshot.val() || 'open';
+            isGlobalStoreOpen = (status === 'open');
+            updateStoreUI();
+            refreshMenuDisplay();
+        });
+
+        // استماع لحالة الأصناف المنفردة
         db.ref('items_stock').on('value', (snapshot) => {
             itemsStockStatus = snapshot.val() || {};
-            if (menuData.length > 0) {
-                const activeCatDOM = document.querySelector('.cat-item.active span');
-                if (activeCatDOM) filterCat(activeCatDOM.innerText);
-            }
+            refreshMenuDisplay();
             if (document.getElementById('adminControlStep').style.display === 'block') {
                 renderAdminItemsList();
             }
         });
 
-        // ================= 3. لوحة التحكم للأصناف =================
+        function refreshMenuDisplay() {
+            if (menuData.length > 0) {
+                const activeCatDOM = document.querySelector('.cat-item.active span');
+                if (activeCatDOM) filterCat(activeCatDOM.innerText);
+            }
+        }
+
+        function updateStoreUI() {
+            const banner = document.getElementById('storeStatusBanner');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusText = document.getElementById('statusText');
+
+            if (isGlobalStoreOpen) {
+                if(banner) banner.className = 'store-status-banner open';
+                if(statusIcon) statusIcon.innerText = '🟢';
+                if(statusText) statusText.innerText = 'المطعم مفتوح ويستقبل الطلبات الآن';
+            } else {
+                if(banner) banner.className = 'store-status-banner closed';
+                if(statusIcon) statusIcon.innerText = '🔴';
+                if(statusText) statusText.innerText = 'عذراً، نفدت الكمية لهذا اليوم 🚫';
+            }
+        }
+
+        // ================= 3. لوحة التحكم بالأصناف والحالة العامة =================
         function openAdminModal() {
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminLoginStep').style.display = 'block';
@@ -632,6 +688,18 @@
             }
         }
 
+        // تغيير الحالة العامة لكل المطعم
+        function setGlobalStoreStatus(status) {
+            db.ref('global_restaurant_status').set(status)
+                .then(() => {
+                    alert(status === 'open' ? 'تم فتح المطعم واستقبال الطلبات ✅' : 'تم إغلاق المطعم وتغيير كل الأصناف لنفدت الكمية 🚫');
+                })
+                .catch((err) => {
+                    alert('حدث خطأ: ' + err.message);
+                });
+        }
+
+        // عرض قائمة الأصناف جوة لوحة الأدمين
         function renderAdminItemsList() {
             const container = document.getElementById('adminItemsContainer');
             if (!container) return;
@@ -653,6 +721,7 @@
             }).join('');
         }
 
+        // تبديل حالة صنف واحد
         function toggleItemStock(itemName) {
             const itemKey = cleanKey(itemName);
             const currentStatus = itemsStockStatus[itemKey] || 'in';
@@ -832,13 +901,14 @@
                 const initialPrice = !isFixed ? (item.price * currentCount) : item.price;
                 const initialSize = !isFixed ? `${currentCount} قطعة` : '';
                 
-                // فحص حالة توفر الصنف من الفايربيس
+                // فحص توفر الصنف (إما المطعم كله مقفول أو هذا الصنف تحديداً)
                 const itemKey = cleanKey(item.name);
-                const isOutOfStock = (itemsStockStatus[itemKey] === 'out');
+                const isItemOutOfStock = (itemsStockStatus[itemKey] === 'out');
+                const isDisabled = (!isGlobalStoreOpen || isItemOutOfStock);
 
-                const btnLabel = isOutOfStock ? "نفدت الكمية 🚫" : "اطلب 🍱";
-                const btnClass = isOutOfStock ? "add-btn out-of-stock-mode" : "add-btn";
-                const disabledAttr = isOutOfStock ? "disabled" : "";
+                const btnLabel = isDisabled ? "نفدت الكمية 🚫" : "اطلب 🍱";
+                const btnClass = isDisabled ? "add-btn out-of-stock-mode" : "add-btn";
+                const disabledAttr = isDisabled ? "disabled" : "";
 
                 return `
                 <div class="food-card ${isFixed ? 'large-food-card' : ''}" id="card-${item.id}">
@@ -872,7 +942,7 @@
         // ================= 6. السلة وإرسال الطلب للواتساب =================
         function triggerAddToCart(e, btn, name) {
             const itemKey = cleanKey(name);
-            if (itemsStockStatus[itemKey] === 'out') return;
+            if (!isGlobalStoreOpen || itemsStockStatus[itemKey] === 'out') return;
 
             const price = btn.getAttribute('data-price') || "0"; 
             const size = btn.getAttribute('data-size');
