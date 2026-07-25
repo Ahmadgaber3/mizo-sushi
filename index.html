@@ -130,7 +130,7 @@
         }
 
         .store-status-banner.open { background: #dcfce7; color: #15803d; border-bottom: 1px solid #bbf7d0; }
-        .store-status-banner.closed { background: #fef3c7; color: #b45309; border-bottom: 1px solid #fde68a; }
+        .store-status-banner.closed { background: #fee2e2; color: #991b1b; border-bottom: 1px solid #fecaca; }
 
         .work-hours-badge {
             display: inline-flex;
@@ -310,7 +310,14 @@
             white-space: nowrap;
         }
 
-        .add-btn.preorder-mode { background: #d97706 !important; box-shadow: 0 3px 8px rgba(217, 119, 6, 0.3) !important; }
+        .add-btn.out-of-stock-mode { 
+            background: #64748b !important; 
+            color: #ffffff !important; 
+            box-shadow: none !important; 
+            cursor: not-allowed !important; 
+            opacity: 0.8;
+        }
+        
         .add-btn.success-state { background: #dcfce7 !important; color: #15803d !important; border: 1.5px solid #16a34a !important; pointer-events: none; }
 
         .price-container-leftish { display: flex; align-items: center; margin-left: auto; padding-right: 2px; }
@@ -327,7 +334,7 @@
         .dev-credit { font-size: 0.72rem; color: var(--desc-text); font-weight: 700; }
         .dev-credit a { color: var(--brand-red); text-decoration: none; display: block; margin-top: 3px; }
 
-        /* زر الأدمين المخفي (الترس ⚙️) */
+        /* زر الترس المخفي (⚙️) للتحكم */
         .admin-trigger {
             position: absolute;
             bottom: 10px;
@@ -337,7 +344,7 @@
             background: transparent;
             border: none;
             cursor: pointer;
-            opacity: 0.2;
+            opacity: 0.25;
             z-index: 999;
             font-size: 1.1rem;
         }
@@ -373,7 +380,6 @@
         .type-btn.active { background: var(--brand-red); color: #ffffff; border-color: var(--brand-red); }
 
         .submit-btn { background: var(--brand-red); color: #ffffff; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 0, 21, 0.3); }
-        .submit-btn.preorder-mode { background: #d97706; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3); }
 
         /* نافذة التحكم بالباسوورد */
         .admin-modal-content {
@@ -454,11 +460,11 @@
             <a href="tel:01030252806">📞 01030252806</a>
         </div>
 
-        <!-- زر الترس المخفي (⚙️) للتحكم -->
+        <!-- زر الترس المخفي للتحكم -->
         <button class="admin-trigger" onclick="openAdminModal()">⚙️</button>
     </footer>
 
-    <!-- نافذة السلة وإتمام الطلب / الحجز -->
+    <!-- نافذة السلة وإتمام الطلب -->
     <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
         <div class="modal-content">
             <h3 id="modalTitle" style="margin-bottom: 12px; font-size: 1.05rem; font-weight: 800; color: var(--main-text);">تفاصيل طلبك 🍱</h3>
@@ -483,11 +489,6 @@
                 <input type="text" id="uName" placeholder="الاسم بالكامل">
                 <input type="tel" id="uPhone" placeholder="رقم الموبايل">
                 <input type="text" id="uAddr" placeholder="العنوان بالتفصيل (المنطقة / الشارع / الدور)">
-                
-                <div id="preOrderTimeBox" style="display: none; margin-bottom: 8px;">
-                    <label style="font-size:0.75rem; font-weight:800; color:var(--brand-red); display:block; margin-bottom:4px;">📅 وقت وتاريخ الاستلام المتوقع:</label>
-                    <input type="text" id="uDeliveryTime" placeholder="مثال: غداً الساعة 4 عصراً">
-                </div>
 
                 <textarea id="uNotes" rows="2" placeholder="ملاحظات الطلب (مثال: زيادات خاصة، تفاصيل إضافية)"></textarea>
             </div>
@@ -508,14 +509,14 @@
             <div id="adminControlStep" style="display: none;">
                 <h3 style="margin-bottom: 12px; font-size: 1rem;">تحديث حالة المطعم اللحظية</h3>
                 <button class="admin-btn admin-btn-open" onclick="setStoreStatusInFirebase('open')">مفتوح ✅</button>
-                <button class="admin-btn admin-btn-close" onclick="setStoreStatusInFirebase('closed')">مغلق (نفدت الكمية) ❌</button>
+                <button class="admin-btn admin-btn-close" onclick="setStoreStatusInFirebase('closed')">نفدت الكمية 🚫</button>
                 <button class="admin-btn admin-btn-cancel" onclick="closeAdminModal()" style="margin-top: 10px;">إغلاق</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ================= 1. إعدادات Firebase الخاصة بك مدمجة بدقة =================
+        // ================= 1. إعدادات Firebase الخاصة بك =================
         const firebaseConfig = {
             apiKey: "AIzaSyAyi3bQqd55atTlULXRTRm5HOuwJthlDaI",
             authDomain: "restaurant-menu-1bfd7.firebaseapp.com",
@@ -555,30 +556,15 @@
             const banner = document.getElementById('storeStatusBanner');
             const statusIcon = document.getElementById('statusIcon');
             const statusText = document.getElementById('statusText');
-            const preOrderBox = document.getElementById('preOrderTimeBox');
-            const submitBtn = document.getElementById('submitOrderBtn');
-            const modalTitle = document.getElementById('modalTitle');
 
             if (isStoreOpen) {
                 if(banner) banner.className = 'store-status-banner open';
                 if(statusIcon) statusIcon.innerText = '🟢';
                 if(statusText) statusText.innerText = 'المطعم مفتوح ويستقبل الطلبات الآن';
-                if(preOrderBox) preOrderBox.style.display = 'none';
-                if(submitBtn) {
-                    submitBtn.classList.remove('preorder-mode');
-                    submitBtn.innerText = 'تأكيد الطلب عبر واتساب 🍣';
-                }
-                if(modalTitle) modalTitle.innerText = 'تفاصيل طلبك 🍱';
             } else {
                 if(banner) banner.className = 'store-status-banner closed';
                 if(statusIcon) statusIcon.innerText = '🔴';
-                if(statusText) statusText.innerText = 'المحل مغلق أو نفدت الكمية - يمكنك عمل حجز مسبق الآن 📅';
-                if(preOrderBox) preOrderBox.style.display = 'block';
-                if(submitBtn) {
-                    submitBtn.classList.add('preorder-mode');
-                    submitBtn.innerText = 'تأكيد الحجز المسبق عبر واتساب 📅';
-                }
-                if(modalTitle) modalTitle.innerText = 'تفاصيل الحجز المسبق 📅';
+                if(statusText) statusText.innerText = 'عذراً، نفدت الكمية لهذا اليوم 🚫';
             }
         }
 
@@ -783,8 +769,9 @@
                 const initialPrice = !isFixed ? (item.price * currentCount) : item.price;
                 const initialSize = !isFixed ? `${currentCount} قطعة` : '';
                 
-                const btnLabel = isStoreOpen ? "اطلب 🍱" : "حجز مسبق 📅";
-                const btnClass = isStoreOpen ? "add-btn" : "add-btn preorder-mode";
+                const btnLabel = isStoreOpen ? "اطلب 🍱" : "نفدت الكمية 🚫";
+                const btnClass = isStoreOpen ? "add-btn" : "add-btn out-of-stock-mode";
+                const disabledAttr = isStoreOpen ? "" : "disabled";
 
                 return `
                 <div class="food-card ${isFixed ? 'large-food-card' : ''}" id="card-${item.id}">
@@ -800,7 +787,7 @@
                     </div>
                     <div class="card-bottom-content">
                         <div class="btn-wrapper">
-                            <button class="${btnClass}" id="btn-${item.id}" data-price="${initialPrice}" data-size="${initialSize}" onclick="triggerAddToCart(event, this, '${item.name.replace(/'/g, "\\'")}')">
+                            <button class="${btnClass}" ${disabledAttr} id="btn-${item.id}" data-price="${initialPrice}" data-size="${initialSize}" onclick="triggerAddToCart(event, this, '${item.name.replace(/'/g, "\\'")}')">
                                 ${btnLabel}
                             </button>
                         </div>
@@ -817,6 +804,8 @@
 
         // ================= 6. السلة وإرسال الطلب للواتساب =================
         function triggerAddToCart(e, btn, name) {
+            if (!isStoreOpen) return; // حماية إضافية لو المطعم قفل
+
             const price = btn.getAttribute('data-price') || "0"; 
             const size = btn.getAttribute('data-size');
             let displayName = name + (size ? ` (${size})` : '');
@@ -828,7 +817,7 @@
             
             setTimeout(() => { 
                 btn.classList.remove('success-state'); 
-                btn.innerText = isStoreOpen ? "اطلب 🍱" : "حجز مسبق 📅"; 
+                btn.innerText = "اطلب 🍱"; 
             }, 1500);
 
             updateCart();
@@ -854,19 +843,11 @@
             const p = document.getElementById('uPhone').value.trim();
             const a = document.getElementById('uAddr').value.trim();
             const notes = document.getElementById('uNotes') ? document.getElementById('uNotes').value.trim() : "";
-            const delTime = document.getElementById('uDeliveryTime') ? document.getElementById('uDeliveryTime').value.trim() : "";
 
             if(!n || !p || cart.length === 0) { alert("برجاء إدخال اسمك ورقم تليفونك أولاً لتأكيد طلبك."); return; }
             if (selectedOrderType === "دليفري" && !a) { alert("برجاء كتابة عنوانك بالتفصيل."); return; }
 
-            let msg = "";
-            if (isStoreOpen) {
-                msg += `*طلب جديد - Mizo Sushi 🍣*\n──────────────\n`;
-            } else {
-                msg += `*📅 طلب حجز مسبق (المطعم مغلق / نفدت الكمية)*\n──────────────\n`;
-                if(delTime) msg += `⏰ *وقت/تاريخ الاستلام المطلوب:* ${delTime}\n`;
-            }
-
+            let msg = `*طلب جديد - Mizo Sushi 🍣*\n──────────────\n`;
             msg += `👤 *الاسم:* ${n}\n📱 *الموبايل:* ${p}\n🛵 *نوع الطلب:* ${selectedOrderType}\n`;
             if (selectedOrderType === "دليفري") msg += `📍 *العنوان:* ${a}\n`;
             
