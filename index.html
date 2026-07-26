@@ -338,7 +338,79 @@
         .price-num { font-weight: 900; }
         .price-txt { font-size: 0.72rem; font-weight: 800; color: var(--brand-red); }
 
-        /* ================= شريط تثبيت التطبيق أسفل الصفحة ================= */
+        /* ================= زر وقائمة اختيار المنطقة المصممة بشكل جديد ================= */
+        .select-zone-trigger-btn {
+            width: 100%;
+            padding: 12px 14px;
+            background: #ffffff;
+            border: 1.5px solid var(--brand-red);
+            border-radius: 12px;
+            color: var(--main-text);
+            font-weight: 800;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(255, 0, 21, 0.08);
+        }
+
+        [data-theme="dark"] .select-zone-trigger-btn {
+            background: #1e1e1e;
+        }
+
+        .zone-modal-card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 60vh;
+            overflow-y: auto;
+            margin-top: 12px;
+            padding-left: 2px;
+        }
+
+        .zone-card-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        [data-theme="dark"] .zone-card-item {
+            background: #2a2a2a;
+        }
+
+        .zone-card-item:active, .zone-card-item.selected {
+            border-color: var(--brand-red);
+            background: #fff5f5;
+        }
+
+        [data-theme="dark"] .zone-card-item.selected {
+            background: #3a1c1e;
+        }
+
+        .zone-card-name {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: var(--main-text);
+        }
+
+        .zone-card-price {
+            font-size: 0.85rem;
+            font-weight: 900;
+            color: var(--brand-red);
+            background: #fee2e2;
+            padding: 3px 8px;
+            border-radius: 8px;
+        }
+
+        /* ================= شريط تثبيت التطبيق ================= */
         .pwa-install-bar {
             position: fixed;
             bottom: 0;
@@ -385,7 +457,7 @@
         .cart-item-price { color: var(--brand-red); font-weight: 800; font-size: 0.8rem; display: block; }
         .remove-btn { color: #ef4444; font-weight: 800; font-size: 0.75rem; cursor: pointer; padding: 4px; }
         
-        .user-fields input, .user-fields textarea, .user-fields select { 
+        .user-fields input, .user-fields textarea { 
             background: var(--input-bg); 
             border: 1px solid var(--border-color); 
             padding: 11px 12px; 
@@ -549,27 +621,12 @@
                     </div>
                 </div>
 
-                <!-- اختيار منطقة التوصيل -->
+                <!-- زر يفتح نافذة اختيار مناطق التوصيل بداخل التطبيق -->
                 <div id="deliveryZoneWrapper">
-                    <select id="deliveryZone" onchange="updateCart()">
-                        <option value="" data-price="0">-- اختر منطقة التوصيل --</option>
-                        <option value="ش جمال عبد الناصر" data-price="20">ش جمال عبد الناصر (20 ج.م)</option>
-                        <option value="الحرفيين" data-price="30">الحرفيين (30 ج.م)</option>
-                        <option value="التجاريين" data-price="30">التجاريين (30 ج.م)</option>
-                        <option value="قباء" data-price="30">قباء (30 ج.م)</option>
-                        <option value="المصانع" data-price="30">المصانع (30 ج.م)</option>
-                        <option value="ش الشركات" data-price="30">ش الشركات (30 ج.م)</option>
-                        <option value="ش الخمسين" data-price="40">ش الخمسين (40 ج.م)</option>
-                        <option value="ش ال12" data-price="40">ش ال12 (40 ج.م)</option>
-                        <option value="ش ال15" data-price="40">ش ال15 (40 ج.م)</option>
-                        <option value="ش ال27" data-price="50">ش ال27 (50 ج.م)</option>
-                        <option value="ش الاربعين" data-price="50">ش الاربعين (50 ج.م)</option>
-                        <option value="ش العشرين خلف حديقه بدر" data-price="50">ش العشرين خلف حديقه بدر (50 ج.م)</option>
-                        <option value="مدينة السلام" data-price="50">مدينة السلام (50 ج.م)</option>
-                        <option value="اسبيكو" data-price="60">اسبيكو (60 ج.م)</option>
-                        <option value="النهضه" data-price="70">النهضه (70 ج.م)</option>
-                        <option value="عزبه النخل" data-price="75">عزبه النخل (75 ج.م)</option>
-                    </select>
+                    <button type="button" class="select-zone-trigger-btn" onclick="openZoneModal()">
+                        <span id="selectedZoneText">📍 اضغط لاختيار منطقة التوصيل</span>
+                        <span style="color: var(--brand-red); font-size: 0.8rem;">تغيير ➔</span>
+                    </button>
                 </div>
 
                 <input type="text" id="uName" placeholder="الاسم بالكامل">
@@ -579,6 +636,20 @@
                 <textarea id="uNotes" rows="2" placeholder="ملاحظات الطلب (مثال: زيادات خاصة، تفاصيل إضافية)"></textarea>
             </div>
             <button class="submit-btn" id="submitOrderBtn" onclick="sendToWA()">تأكيد الطلب عبر واتساب 🍣</button>
+        </div>
+    </div>
+
+    <!-- نافذة اختر منطقة التوصيل المصممة كصفحة داخلية برواقة -->
+    <div class="modal" id="zoneModal" style="z-index: 2500;" onclick="if(event.target==this) closeZoneModal()">
+        <div class="modal-content" style="border-radius: 24px 24px 0 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h3 style="font-size: 1rem; font-weight: 800;">اختر منطقة التوصيل 🛵</h3>
+                <span onclick="closeZoneModal()" style="cursor: pointer; font-weight: 800; font-size: 1.1rem;">✕</span>
+            </div>
+
+            <div class="zone-modal-card-list" id="zoneListContainer">
+                <!-- بيتم ملؤه تلقائياً -->
+            </div>
         </div>
     </div>
 
@@ -609,6 +680,28 @@
     </div>
 
     <script>
+        // قائمة أسعار التوصيل الكاملة الخاصة بك
+        const DELIVERY_ZONES = [
+            { name: "ش جمال عبد الناصر", price: 20 },
+            { name: "الحرفيين", price: 30 },
+            { name: "التجاريين", price: 30 },
+            { name: "قباء", price: 30 },
+            { name: "المصانع", price: 30 },
+            { name: "ش الشركات", price: 30 },
+            { name: "ش الخمسين", price: 40 },
+            { name: "ش ال12", price: 40 },
+            { name: "ش ال15", price: 40 },
+            { name: "ش ال27", price: 50 },
+            { name: "ش الاربعين", price: 50 },
+            { name: "ش العشرين خلف حديقه بدر", price: 50 },
+            { name: "مدينة السلام", price: 50 },
+            { name: "اسبيكو", price: 60 },
+            { name: "النهضه", price: 70 },
+            { name: "عزبه النخل", price: 75 }
+        ];
+
+        let selectedZone = null;
+
         let deferredPrompt;
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -782,7 +875,40 @@
             if (themeBtn) themeBtn.addEventListener('click', handleThemeToggle);
 
             loadMenu();
+            renderZoneList();
         });
+
+        // دالة عرض المناطق داخل المودال الداخلي
+        function renderZoneList() {
+            const container = document.getElementById('zoneListContainer');
+            if (!container) return;
+
+            container.innerHTML = DELIVERY_ZONES.map((zone, idx) => `
+                <div class="zone-card-item ${selectedZone && selectedZone.name === zone.name ? 'selected' : ''}" onclick="selectZone(${idx})">
+                    <span class="zone-card-name">📍 ${zone.name}</span>
+                    <span class="zone-card-price">${zone.price} ج.م</span>
+                </div>
+            `).join('');
+        }
+
+        function openZoneModal() {
+            document.getElementById('zoneModal').style.display = 'flex';
+        }
+
+        function closeZoneModal() {
+            document.getElementById('zoneModal').style.display = 'none';
+        }
+
+        function selectZone(idx) {
+            selectedZone = DELIVERY_ZONES[idx];
+            const btnText = document.getElementById('selectedZoneText');
+            if (btnText) {
+                btnText.innerText = `📍 ${selectedZone.name} (${selectedZone.price} ج.م)`;
+            }
+            renderZoneList();
+            closeZoneModal();
+            updateCart();
+        }
 
         function setOrderType(type) {
             selectedOrderType = type;
@@ -1024,11 +1150,8 @@
             
             currentSubtotal = subtotal;
 
-            // حساب التوصيل
-            const zoneSelect = document.getElementById('deliveryZone');
-            if (selectedOrderType === 'دليفري' && zoneSelect && zoneSelect.selectedIndex > 0) {
-                const selectedOpt = zoneSelect.options[zoneSelect.selectedIndex];
-                currentDeliveryCost = parseFloat(selectedOpt.getAttribute('data-price')) || 0;
+            if (selectedOrderType === 'دليفري' && selectedZone) {
+                currentDeliveryCost = selectedZone.price;
             } else {
                 currentDeliveryCost = 0;
             }
@@ -1048,26 +1171,23 @@
             const p = document.getElementById('uPhone').value.trim();
             const a = document.getElementById('uAddr').value.trim();
             const notes = document.getElementById('uNotes') ? document.getElementById('uNotes').value.trim() : "";
-            const zoneSelect = document.getElementById('deliveryZone');
 
             if(!n || !p || cart.length === 0) { alert("برجاء إدخال اسمك ورقم تليفونك أولاً لتأكيد طلبك."); return; }
             
-            let selectedZoneName = "";
             if (selectedOrderType === "دليفري") {
-                if (!zoneSelect || zoneSelect.value === "") {
-                    alert("برجاء اختيار منطقة التوصيل من القائمة."); return;
+                if (!selectedZone) {
+                    alert("برجاء اضغط لاختيار منطقة التوصيل أولاً."); return;
                 }
                 if (!a) {
                     alert("برجاء كتابة عنوانك بالتفصيل."); return;
                 }
-                selectedZoneName = zoneSelect.value;
             }
 
             let msg = `*طلب جديد - Mizo Sushi 🍣*\n──────────────\n`;
             msg += `👤 *الاسم:* ${n}\n📱 *الموبايل:* ${p}\n🛵 *نوع الطلب:* ${selectedOrderType}\n`;
             
             if (selectedOrderType === "دليفري") {
-                msg += `📍 *المنطقة:* ${selectedZoneName}\n📍 *العنوان:* ${a}\n`;
+                msg += `📍 *المنطقة:* ${selectedZone.name}\n📍 *العنوان:* ${a}\n`;
             }
             
             msg += `──────────────\n📦 *الطلبات:*\n`;
