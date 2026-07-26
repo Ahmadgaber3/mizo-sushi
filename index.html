@@ -630,6 +630,27 @@
         .global-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: 800; font-size: 0.82rem; cursor: pointer; }
         .global-btn.open { background: #2e7d32; color: #fff; }
         .global-btn.close { background: #c62828; color: #fff; }
+
+        .work-hours-control-box {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: right;
+        }
+
+        .work-hours-control-box input {
+            padding: 9px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--main-text);
+            font-size: 0.8rem;
+            font-weight: 700;
+            outline: none;
+        }
         
         .admin-items-list { overflow-y: auto; max-height: 50vh; margin: 8px 0; padding-left: 5px; display: flex; flex-direction: column; gap: 8px; }
         .admin-item-row { display: flex; align-items: center; justify-content: space-between; background: var(--input-bg); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color); }
@@ -834,7 +855,7 @@
                 <div class="header-logo-final"></div>
                 <div class="work-hours-badge">
                     <span class="alarm-icon">⏰</span>
-                    <span>مواعيد العمل: يومياً من 3:00 م لـ 11:00 م (الجمعة إجازة)</span>
+                    <span id="workHoursDisplay">مواعيد العمل: يومياً من 3:00 م لـ 11:00 م (الجمعة إجازة)</span>
                 </div>
             </div>
 
@@ -1005,8 +1026,14 @@
                     <button class="admin-tab-btn" onclick="switchAdminTab('kitchenTab', this)">شاشة المطبخ 👨‍🍳</button>
                 </div>
 
-                <!-- تبويب التحكم بالمنيو -->
+                <!-- تبويب التحكم بالمنيو ومواعيد العمل -->
                 <div id="stockTab" class="admin-tab-section active">
+                    <div class="work-hours-control-box">
+                        <span style="font-size:0.75rem; font-weight:800; color:var(--main-text);">⏰ تعديل مواعيد العمل:</span>
+                        <input type="text" id="adminWorkHoursInput" placeholder="أدخل مواعيد العمل الجديدة">
+                        <button class="admin-btn admin-btn-open" style="padding:8px; margin:0;" onclick="saveWorkHours()">حفظ المواعيد الجديدة 💾</button>
+                    </div>
+
                     <div class="global-control-box">
                         <button class="global-btn open" onclick="setGlobalStoreStatus('open')">فتح الكل ✅</button>
                         <button class="global-btn close" onclick="setGlobalStoreStatus('closed')">قفل الكل (نفدت الكمية) 🚫</button>
@@ -1123,6 +1150,28 @@
             updateStoreUI();
             refreshMenuDisplay();
         });
+
+        // الاستماع لمواعيد العمل اللحظية من قاعدة البيانات
+        db.ref('work_hours_text').on('value', (snapshot) => {
+            const hoursText = snapshot.val() || "مواعيد العمل: يومياً من 3:00 م لـ 11:00 م (الجمعة إجازة)";
+            const displayEl = document.getElementById('workHoursDisplay');
+            const inputEl = document.getElementById('adminWorkHoursInput');
+            if (displayEl) displayEl.innerText = hoursText;
+            if (inputEl) inputEl.value = hoursText;
+        });
+
+        function saveWorkHours() {
+            const inputEl = document.getElementById('adminWorkHoursInput');
+            if (!inputEl) return;
+            const newText = inputEl.value.trim();
+            if (!newText) {
+                alert('برجاء أدخل مواعيد العمل أولاً!');
+                return;
+            }
+            db.ref('work_hours_text').set(newText)
+                .then(() => alert('تم تحديث مواعيد العمل بنجاح! ✅'))
+                .catch((err) => alert('حدث خطأ: ' + err.message));
+        }
 
         db.ref('items_stock').on('value', (snapshot) => {
             itemsStockStatus = snapshot.val() || {};

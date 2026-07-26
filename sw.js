@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mizo-sushi-cache-v12';
+const CACHE_NAME = 'mizo-sushi-cache-v13';
 const urlsToCache = [
   './',
   './index.html',
