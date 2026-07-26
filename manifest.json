@@ -1,0 +1,22 @@
+{
+  "name": "ميزو سوشي | MIZO SUSHI",
+  "short_name": "MIZO SUSHI",
+  "description": "المنيو الرسمي لمطعم ميزو سوشي - طلبات وتوصيل أونلاين",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#ff0015",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./images/logooo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./images/logooo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

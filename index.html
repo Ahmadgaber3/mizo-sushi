@@ -66,9 +66,10 @@
             color: var(--main-text); 
             line-height: 1.4; 
             overflow-x: hidden; 
+            padding-bottom: 70px; /* مساحة لشريط التثبيت */
         }
 
-        /* ================= شاشة التحميل تكبير اللوجو ================= */
+        /* ================= شاشة التحميل ================= */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #141414; 
@@ -79,7 +80,6 @@
         
         .loader-content { text-align: center; padding: 20px; max-width: 90%; display: flex; flex-direction: column; align-items: center; }
         
-        /* تكبير اللوجو في شاشة التحميل (من 150px إلى 210px) */
         .loader-logo-final {
             width: 210px; 
             height: 210px; 
@@ -103,12 +103,11 @@
         .loading-bar span { display: block; width: 0%; height: 100%; background: linear-gradient(90deg, var(--brand-red) 0%, #ff4d5e 100%); box-shadow: 0 0 10px var(--brand-red); border-radius: 10px; transition: width 0.2s ease; }
         .splash-hidden { transform: translateY(-100%); pointer-events: none; }
 
-        /* ================= الهيدر الداخلي وتكبير اللوجو ================= */
+        /* ================= الهيدر الداخلي ================= */
         .sticky-wrapper { position: sticky; top: 0; z-index: 1000; background: var(--header-bg); border-bottom: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); }
         header { display: flex; flex-direction: column; align-items: center; padding: 14px 0 10px 0; position: relative; }
         .header-top { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
         
-        /* تكبير اللوجو الداخلي (من 100px إلى 140px) */
         .header-logo-final { 
             width: 140px; 
             height: 140px; 
@@ -239,7 +238,7 @@
         } 
         .cat-item.active span { color: var(--main-text); font-weight: 900; }
 
-        /* ================= قائمة الكروت وإعداد الكارت الكبير ================= */
+        /* ================= قائمة الكروت ================= */
         .menu-list { display: flex; flex-direction: column; gap: 12px; padding: 16px; max-width: 600px; margin: auto; min-height: 400px; }
         
         .food-card { 
@@ -269,7 +268,7 @@
         .food-card .item-img { width: 100%; height: 100%; object-fit: cover; }
         .card-details-wrapper { display: flex; flex-direction: column; gap: 2px; text-align: right; flex: 1; min-width: 0; }
 
-        /* الكارت الكبير بنسبة 600 في 270 بالضبط للميزو دايموند والعروض */
+        /* الكارت الكبير بنسبة 600 في 270 */
         .food-card.large-food-card .card-top-content { flex-direction: column; gap: 8px; }
         .food-card.large-food-card .card-image-wrapper { 
             width: 100%; 
@@ -291,12 +290,10 @@
         .food-name { font-weight: 800; font-size: 1rem; color: var(--card-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .food-ingredients { font-size: 0.68rem; color: var(--card-desc-text); font-weight: 600; line-height: 1.3; display: block; }
 
-        /* عدّاد القطع */
         .piece-counter-box { display: flex; align-items: center; justify-content: space-between; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 3px 6px; margin-top: 6px; width: 100%; }
         .piece-btn { background: var(--brand-red); color: #ffffff; border: none; width: 28px; height: 28px; border-radius: 8px; font-size: 1rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .piece-count-text { font-size: 0.8rem; font-weight: 800; color: var(--main-text); }
 
-        /* الجزء السفلي للكارت */
         .card-bottom-content { 
             display: flex; 
             flex-direction: row-reverse; 
@@ -342,6 +339,80 @@
         .price-num { font-weight: 900; }
         .price-txt { font-size: 0.72rem; font-weight: 800; color: var(--brand-red); }
 
+        /* ================= شريط تثبيت التطبيق أسفل الصفحة (Install Banner) ================= */
+        .pwa-install-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--header-bg);
+            border-top: 2px solid var(--brand-red);
+            padding: 10px 16px;
+            display: none; /* يظهر بالسي اس اس تلقائياً لما الجهاز يدعم التثبيت */
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1500;
+        }
+
+        .pwa-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pwa-app-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .pwa-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pwa-app-title {
+            font-size: 0.85rem;
+            font-weight: 900;
+            color: var(--main-text);
+        }
+
+        .pwa-app-desc {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--desc-text);
+        }
+
+        .pwa-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pwa-install-btn {
+            background: var(--brand-red);
+            color: #ffffff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(255, 0, 21, 0.3);
+        }
+
+        .pwa-close-btn {
+            background: transparent;
+            border: none;
+            color: var(--desc-text);
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            padding: 4px;
+        }
+
         /* ================= الفوتر ================= */
         .restaurant-footer { position: relative; padding: 25px 15px; text-align: center; background: var(--header-bg); border-top: 1px solid var(--border-color); margin-top: 25px; padding-bottom: 35px; }
         .footer-address-bar { font-size: 0.78rem; font-weight: 700; color: var(--main-text); display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 15px; padding: 10px; background: var(--input-bg); border-radius: 12px; border: 1px solid var(--border-color); }
@@ -351,7 +422,6 @@
         .dev-credit { font-size: 0.72rem; color: var(--desc-text); font-weight: 700; }
         .dev-credit a { color: var(--brand-red); text-decoration: none; display: block; margin-top: 3px; }
 
-        /* زر الترس المخفي للتحكم */
         .admin-trigger {
             position: absolute;
             bottom: 10px;
@@ -366,7 +436,7 @@
             font-size: 1.1rem;
         }
 
-        /* ================= نافذة اتمام الطلب ================= */
+        /* ================= النوافذ ================= */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; justify-content: center; align-items: flex-end; backdrop-filter: blur(4px); }
         .modal-content { background: var(--card-inner-bg); color: var(--main-text); width: 100%; max-width: 480px; padding: 18px 20px; border-radius: 24px 22px 0 0; max-height: 85vh; overflow-y: auto; box-shadow: 0 -8px 30px rgba(0,0,0,0.3); }
 
@@ -398,7 +468,6 @@
 
         .submit-btn { background: var(--brand-red); color: #ffffff; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 0, 21, 0.3); }
 
-        /* ================= نافذة التحكم بالمنيو (Admin Modal) ================= */
         .admin-modal-content {
             background: var(--card-inner-bg);
             padding: 20px;
@@ -413,68 +482,15 @@
             flex-direction: column;
         }
 
-        .global-control-box {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .global-btn {
-            flex: 1;
-            padding: 10px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 800;
-            font-size: 0.82rem;
-            cursor: pointer;
-        }
+        .global-control-box { display: flex; gap: 8px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
+        .global-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: 800; font-size: 0.82rem; cursor: pointer; }
         .global-btn.open { background: #2e7d32; color: #fff; }
         .global-btn.close { background: #c62828; color: #fff; }
         
-        .admin-items-list {
-            overflow-y: auto;
-            max-height: 50vh;
-            margin: 8px 0;
-            padding-left: 5px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .admin-item-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--input-bg);
-            padding: 8px 12px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-        }
-
-        .admin-item-name {
-            font-size: 0.82rem;
-            font-weight: 800;
-            color: var(--main-text);
-            text-align: right;
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-left: 10px;
-        }
-
-        .admin-toggle-btn {
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: none;
-            font-size: 0.75rem;
-            font-weight: 800;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        
+        .admin-items-list { overflow-y: auto; max-height: 50vh; margin: 8px 0; padding-left: 5px; display: flex; flex-direction: column; gap: 8px; }
+        .admin-item-row { display: flex; align-items: center; justify-content: space-between; background: var(--input-bg); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color); }
+        .admin-item-name { font-size: 0.82rem; font-weight: 800; color: var(--main-text); text-align: right; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-left: 10px; }
+        .admin-toggle-btn { padding: 6px 12px; border-radius: 8px; border: none; font-size: 0.75rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
         .admin-toggle-btn.btn-in-stock { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
         .admin-toggle-btn.btn-out-stock { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
 
@@ -529,6 +545,21 @@
 
     <main id="menuList" class="menu-list"></main>
 
+    <!-- شريط تثبيت التطبيق السريع أسفل الصفحة -->
+    <div class="pwa-install-bar" id="pwaInstallBar">
+        <div class="pwa-info">
+            <img src="./images/logooo.png" class="pwa-app-icon" alt="App Icon">
+            <div class="pwa-text">
+                <span class="pwa-app-title">تطبيق Mizo Sushi</span>
+                <span class="pwa-app-desc">ثبّت التطبيق لطلب أسرع وتجربة أفضل!</span>
+            </div>
+        </div>
+        <div class="pwa-actions">
+            <button class="pwa-install-btn" id="pwaInstallBtn">تثبيت التطبيق 📲</button>
+            <button class="pwa-close-btn" onclick="dismissPwaBar()">✕</button>
+        </div>
+    </div>
+
     <footer class="restaurant-footer">
         <div class="footer-address-bar">
             <span class="footer-address-label">📍 العنوان:</span>
@@ -545,11 +576,10 @@
             <a href="tel:01030252806">📞 01030252806</a>
         </div>
 
-        <!-- زر الترس المخفي للتحكم -->
         <button class="admin-trigger" onclick="openAdminModal()">⚙️</button>
     </footer>
 
-    <!-- نافذة السلة وإتمام الطلب -->
+    <!-- نافذة السلة -->
     <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
         <div class="modal-content">
             <h3 id="modalTitle" style="margin-bottom: 12px; font-size: 1.05rem; font-weight: 800; color: var(--main-text);">تفاصيل طلبك 🍱</h3>
@@ -581,7 +611,7 @@
         </div>
     </div>
 
-    <!-- نافذة التحكم الشاملة (Admin Modal) -->
+    <!-- لوحة التحكم -->
     <div class="modal" id="adminModal" style="align-items: center;" onclick="if(event.target==this) closeAdminModal()">
         <div class="admin-modal-content">
             <div id="adminLoginStep">
@@ -594,15 +624,12 @@
             <div id="adminControlStep" style="display: none;">
                 <h3 style="margin-bottom: 8px; font-size: 1rem;">التحكم في حالة المنيو ⚙️</h3>
                 
-                <!-- التحكم العام بكل الأصناف -->
                 <div class="global-control-box">
                     <button class="global-btn open" onclick="setGlobalStoreStatus('open')">فتح الكل ✅</button>
                     <button class="global-btn close" onclick="setGlobalStoreStatus('closed')">قفل الكل (نفدت الكمية) 🚫</button>
                 </div>
 
                 <p style="font-size: 0.72rem; color: var(--desc-text); margin-bottom: 6px;">أو التحكم في توفر كل صنف بشكل منفصل:</p>
-                
-                <!-- قائمة الأصناف المنفردة -->
                 <div class="admin-items-list" id="adminItemsContainer"></div>
 
                 <button class="admin-btn admin-btn-cancel" onclick="closeAdminModal()" style="margin-top: 5px;">إغلاق اللوحة</button>
@@ -611,7 +638,43 @@
     </div>
 
     <script>
-        // ================= 1. إعدادات Firebase الخاص بك =================
+        // ================= 1. تسجيل Service Worker وتفعيل PWA =================
+        let deferredPrompt;
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker Registered Successfully!'))
+                    .catch(err => console.log('Service Worker Failed:', err));
+            });
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const pwaBar = document.getElementById('pwaInstallBar');
+            if (pwaBar) pwaBar.style.display = 'flex';
+        });
+
+        const installBtn = document.getElementById('pwaInstallBtn');
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        dismissPwaBar();
+                    }
+                    deferredPrompt = null;
+                }
+            });
+        }
+
+        function dismissPwaBar() {
+            const pwaBar = document.getElementById('pwaInstallBar');
+            if (pwaBar) pwaBar.style.display = 'none';
+        }
+
+        // ================= 2. إعدادات Firebase =================
         const firebaseConfig = {
             apiKey: "AIzaSyAyi3bQqd55atTlULXRTRm5HOuwJthlDaI",
             authDomain: "restaurant-menu-1bfd7.firebaseapp.com",
@@ -637,11 +700,8 @@
         let isGlobalStoreOpen = true; 
         let itemsStockStatus = {}; 
 
-        function cleanKey(name) {
-            return name.replace(/[.#$\[\]]/g, "_");
-        }
+        function cleanKey(name) { return name.replace(/[.#$\[\]]/g, "_"); }
 
-        // ================= 2. الاستماع اللحظي لـ Firebase =================
         db.ref('global_restaurant_status').on('value', (snapshot) => {
             const status = snapshot.val() || 'open';
             isGlobalStoreOpen = (status === 'open');
@@ -680,7 +740,6 @@
             }
         }
 
-        // ================= 3. لوحة التحكم للأدمين =================
         function openAdminModal() {
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminLoginStep').style.display = 'block';
@@ -688,9 +747,7 @@
             document.getElementById('adminPassInput').value = '';
         }
 
-        function closeAdminModal() {
-            document.getElementById('adminModal').style.display = 'none';
-        }
+        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
 
         function checkAdminPass() {
             const input = document.getElementById('adminPassInput').value;
@@ -705,12 +762,8 @@
 
         function setGlobalStoreStatus(status) {
             db.ref('global_restaurant_status').set(status)
-                .then(() => {
-                    alert(status === 'open' ? 'تم فتح المطعم واستقبال الطلبات ✅' : 'تم إغلاق المطعم وتغيير كل الأصناف لنفدت الكمية 🚫');
-                })
-                .catch((err) => {
-                    alert('حدث خطأ: ' + err.message);
-                });
+                .then(() => alert(status === 'open' ? 'تم فتح المطعم واستقبال الطلبات ✅' : 'تم إغلاق المطعم وتغيير كل الأصناف لنفدت الكمية 🚫'))
+                .catch((err) => alert('حدث خطأ: ' + err.message));
         }
 
         function renderAdminItemsList() {
@@ -720,7 +773,6 @@
             container.innerHTML = menuData.map(item => {
                 const itemKey = cleanKey(item.name);
                 const isOutOfStock = (itemsStockStatus[itemKey] === 'out');
-                
                 const btnText = isOutOfStock ? "نفدت الكمية 🚫" : "متاح ✅";
                 const btnClass = isOutOfStock ? "btn-out-stock" : "btn-in-stock";
                 
@@ -739,13 +791,9 @@
             const currentStatus = itemsStockStatus[itemKey] || 'in';
             const newStatus = (currentStatus === 'out') ? 'in' : 'out';
 
-            db.ref(`items_stock/${itemKey}`).set(newStatus)
-                .catch((err) => {
-                    alert('حدث خطأ أثناء الحفظ: ' + err.message);
-                });
+            db.ref(`items_stock/${itemKey}`).set(newStatus).catch((err) => alert('حدث خطأ أثناء الحفظ: ' + err.message));
         }
 
-        // ================= 4. المظهر =================
         function handleThemeToggle() {
             const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -767,7 +815,6 @@
             loadMenu();
         });
 
-        // ================= 5. جلب بيانات المنيو والتحميل المسبق المكتمل للصور =================
         function setOrderType(type) {
             selectedOrderType = type;
             const btnDel = document.getElementById('btnDelivery');
@@ -801,7 +848,6 @@
             return parseFloat(cleanStr) || 0;
         }
 
-        // دالة مخصصة لتحميل جميع الصور مسبقاً قبل إنهاء العداد
         function preloadAllImages(urls, onProgress, onComplete) {
             if (urls.length === 0) { onComplete(); return; }
             let loadedCount = 0;
@@ -811,9 +857,7 @@
                 img.onload = img.onerror = () => {
                     loadedCount++;
                     onProgress(loadedCount, urls.length);
-                    if (loadedCount === urls.length) {
-                        onComplete();
-                    }
+                    if (loadedCount === urls.length) onComplete();
                 };
             });
         }
@@ -828,13 +872,11 @@
                 const data = await res.text();
                 processCSVData(data);
 
-                // جمع جميع روابط الصور (صور الأقسام + صور الأصناف)
                 const categories = [...new Set(menuData.map(item => item.category))];
                 const catImages = categories.map(cat => `${IMAGES_PATH}${cat}.jpg`);
                 const itemImages = menuData.map(item => `${IMAGES_PATH}${item.name}.jpg`);
                 const allImagesToPreload = [...new Set([...catImages, ...itemImages])];
 
-                // التحميل الفعلي المسبق لجميع الصور مع تحديث العداد اللحظي
                 preloadAllImages(allImagesToPreload, (loaded, total) => {
                     const percent = Math.floor((loaded / total) * 100);
                     if(counterEl) counterEl.innerText = `${percent}%`;
@@ -866,7 +908,6 @@
                 const desc = col[3] ? col[3].trim() : "";
                 
                 if(!name || name === "اسم الصنف" || name === "الصنف") return null;
-                
                 return { id: idx, category, name, price: cleanPriceValue(rawPrice), desc };
             }).filter(Boolean);
 
@@ -890,7 +931,6 @@
             filterCat(currentActiveCat);
         }
 
-        // إضافة Mizo Diamond لإلزامية الكارت الكبير
         function isFixedPackageCategory(catName) {
             if (!catName) return false;
             const normalized = catName.trim().toLowerCase();
@@ -978,7 +1018,6 @@
             }).join('');
         }
 
-        // ================= 6. السلة وإرسال الطلب للواتساب =================
         function triggerAddToCart(e, btn, name) {
             const itemKey = cleanKey(name);
             if (!isGlobalStoreOpen || itemsStockStatus[itemKey] === 'out') return;
