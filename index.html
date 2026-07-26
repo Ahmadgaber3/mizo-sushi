@@ -66,7 +66,7 @@
             color: var(--main-text); 
             line-height: 1.4; 
             overflow-x: hidden; 
-            padding-bottom: 70px; /* مساحة لشريط التثبيت */
+            padding-bottom: 70px;
         }
 
         /* ================= شاشة التحميل ================= */
@@ -268,7 +268,6 @@
         .food-card .item-img { width: 100%; height: 100%; object-fit: cover; }
         .card-details-wrapper { display: flex; flex-direction: column; gap: 2px; text-align: right; flex: 1; min-width: 0; }
 
-        /* الكارت الكبير بنسبة 600 في 270 */
         .food-card.large-food-card .card-top-content { flex-direction: column; gap: 8px; }
         .food-card.large-food-card .card-image-wrapper { 
             width: 100%; 
@@ -339,7 +338,7 @@
         .price-num { font-weight: 900; }
         .price-txt { font-size: 0.72rem; font-weight: 800; color: var(--brand-red); }
 
-        /* ================= شريط تثبيت التطبيق أسفل الصفحة (Install Banner) ================= */
+        /* ================= شريط تثبيت التطبيق أسفل الصفحة ================= */
         .pwa-install-bar {
             position: fixed;
             bottom: 0;
@@ -348,70 +347,21 @@
             background: var(--header-bg);
             border-top: 2px solid var(--brand-red);
             padding: 10px 16px;
-            display: none; /* يظهر بالسي اس اس تلقائياً لما الجهاز يدعم التثبيت */
+            display: none; 
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
             z-index: 1500;
         }
 
-        .pwa-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .pwa-app-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            object-fit: cover;
-        }
-
-        .pwa-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .pwa-app-title {
-            font-size: 0.85rem;
-            font-weight: 900;
-            color: var(--main-text);
-        }
-
-        .pwa-app-desc {
-            font-size: 0.68rem;
-            font-weight: 700;
-            color: var(--desc-text);
-        }
-
-        .pwa-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .pwa-install-btn {
-            background: var(--brand-red);
-            color: #ffffff;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 0 3px 8px rgba(255, 0, 21, 0.3);
-        }
-
-        .pwa-close-btn {
-            background: transparent;
-            border: none;
-            color: var(--desc-text);
-            font-size: 1.1rem;
-            font-weight: 800;
-            cursor: pointer;
-            padding: 4px;
-        }
+        .pwa-info { display: flex; align-items: center; gap: 10px; }
+        .pwa-app-icon { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; }
+        .pwa-text { display: flex; flex-direction: column; }
+        .pwa-app-title { font-size: 0.85rem; font-weight: 900; color: var(--main-text); }
+        .pwa-app-desc { font-size: 0.68rem; font-weight: 700; color: var(--desc-text); }
+        .pwa-actions { display: flex; align-items: center; gap: 8px; }
+        .pwa-install-btn { background: var(--brand-red); color: #ffffff; border: none; padding: 8px 14px; border-radius: 10px; font-size: 0.8rem; font-weight: 800; cursor: pointer; box-shadow: 0 3px 8px rgba(255, 0, 21, 0.3); }
+        .pwa-close-btn { background: transparent; border: none; color: var(--desc-text); font-size: 1.1rem; font-weight: 800; cursor: pointer; padding: 4px; }
 
         /* ================= الفوتر ================= */
         .restaurant-footer { position: relative; padding: 25px 15px; text-align: center; background: var(--header-bg); border-top: 1px solid var(--border-color); margin-top: 25px; padding-bottom: 35px; }
@@ -422,19 +372,7 @@
         .dev-credit { font-size: 0.72rem; color: var(--desc-text); font-weight: 700; }
         .dev-credit a { color: var(--brand-red); text-decoration: none; display: block; margin-top: 3px; }
 
-        .admin-trigger {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            width: 30px;
-            height: 30px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            opacity: 0.25;
-            z-index: 999;
-            font-size: 1.1rem;
-        }
+        .admin-trigger { position: absolute; bottom: 10px; left: 10px; width: 30px; height: 30px; background: transparent; border: none; cursor: pointer; opacity: 0.25; z-index: 999; font-size: 1.1rem; }
 
         /* ================= النوافذ ================= */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; justify-content: center; align-items: flex-end; backdrop-filter: blur(4px); }
@@ -447,7 +385,7 @@
         .cart-item-price { color: var(--brand-red); font-weight: 800; font-size: 0.8rem; display: block; }
         .remove-btn { color: #ef4444; font-weight: 800; font-size: 0.75rem; cursor: pointer; padding: 4px; }
         
-        .user-fields input, .user-fields textarea { 
+        .user-fields input, .user-fields textarea, .user-fields select { 
             background: var(--input-bg); 
             border: 1px solid var(--border-color); 
             padding: 11px 12px; 
@@ -458,6 +396,7 @@
             text-align: right; 
             font-size: 0.82rem; 
             font-weight: 700;
+            outline: none;
         }
 
         .order-type-container { margin-bottom: 12px; text-align: right; }
@@ -545,7 +484,7 @@
 
     <main id="menuList" class="menu-list"></main>
 
-    <!-- شريط تثبيت التطبيق السريع أسفل الصفحة -->
+    <!-- شريط تثبيت التطبيق -->
     <div class="pwa-install-bar" id="pwaInstallBar">
         <div class="pwa-info">
             <img src="./images/logooo.png" class="pwa-app-icon" alt="App Icon">
@@ -579,7 +518,7 @@
         <button class="admin-trigger" onclick="openAdminModal()">⚙️</button>
     </footer>
 
-    <!-- نافذة السلة -->
+    <!-- نافذة السلة وإتمام الطلب -->
     <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
         <div class="modal-content">
             <h3 id="modalTitle" style="margin-bottom: 12px; font-size: 1.05rem; font-weight: 800; color: var(--main-text);">تفاصيل طلبك 🍱</h3>
@@ -587,8 +526,17 @@
             
             <div style="margin: 12px 0; padding: 12px 14px; background: var(--input-bg); border-radius: 12px; display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; border: 1px solid var(--border-color);">
                 <div style="display: flex; justify-content: space-between; color: var(--main-text);">
+                    <span>مجموع الأصناف:</span>
+                    <b id="subtotalAmount" style="color: var(--main-text);">0 جنيه</b>
+                </div>
+                <div id="deliveryRow" style="display: flex; justify-content: space-between; color: var(--main-text);">
+                    <span>سعر التوصيل:</span>
+                    <b id="deliveryCostText" style="color: var(--brand-red);">0 جنيه</b>
+                </div>
+                <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 2px 0;">
+                <div style="display: flex; justify-content: space-between; color: var(--main-text);">
                     <span>المجموع الكلي:</span>
-                    <b id="totalAmount" style="color: var(--brand-red); font-size: 1.05rem;">0 جنيه</b>
+                    <b id="totalAmount" style="color: var(--brand-red); font-size: 1.1rem;">0 جنيه</b>
                 </div>
             </div>
 
@@ -599,6 +547,29 @@
                         <button type="button" class="type-btn active" id="btnDelivery" onclick="setOrderType('دليفري')">🛵 دليفري</button>
                         <button type="button" class="type-btn" id="btnTakeaway" onclick="setOrderType('تيك أواي')">🛍️ تيك أواي</button>
                     </div>
+                </div>
+
+                <!-- اختيار منطقة التوصيل -->
+                <div id="deliveryZoneWrapper">
+                    <select id="deliveryZone" onchange="updateCart()">
+                        <option value="" data-price="0">-- اختر منطقة التوصيل --</option>
+                        <option value="ش جمال عبد الناصر" data-price="20">ش جمال عبد الناصر (20 ج.م)</option>
+                        <option value="الحرفيين" data-price="30">الحرفيين (30 ج.م)</option>
+                        <option value="التجاريين" data-price="30">التجاريين (30 ج.م)</option>
+                        <option value="قباء" data-price="30">قباء (30 ج.م)</option>
+                        <option value="المصانع" data-price="30">المصانع (30 ج.م)</option>
+                        <option value="ش الشركات" data-price="30">ش الشركات (30 ج.م)</option>
+                        <option value="ش الخمسين" data-price="40">ش الخمسين (40 ج.م)</option>
+                        <option value="ش ال12" data-price="40">ش ال12 (40 ج.م)</option>
+                        <option value="ش ال15" data-price="40">ش ال15 (40 ج.م)</option>
+                        <option value="ش ال27" data-price="50">ش ال27 (50 ج.م)</option>
+                        <option value="ش الاربعين" data-price="50">ش الاربعين (50 ج.م)</option>
+                        <option value="ش العشرين خلف حديقه بدر" data-price="50">ش العشرين خلف حديقه بدر (50 ج.م)</option>
+                        <option value="مدينة السلام" data-price="50">مدينة السلام (50 ج.م)</option>
+                        <option value="اسبيكو" data-price="60">اسبيكو (60 ج.م)</option>
+                        <option value="النهضه" data-price="70">النهضه (70 ج.م)</option>
+                        <option value="عزبه النخل" data-price="75">عزبه النخل (75 ج.م)</option>
+                    </select>
                 </div>
 
                 <input type="text" id="uName" placeholder="الاسم بالكامل">
@@ -638,12 +609,11 @@
     </div>
 
     <script>
-        // ================= 1. تسجيل Service Worker وتفعيل PWA =================
         let deferredPrompt;
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker Registered Successfully!'))
+                    .then(reg => console.log('Service Worker Registered!'))
                     .catch(err => console.log('Service Worker Failed:', err));
             });
         }
@@ -661,9 +631,7 @@
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        dismissPwaBar();
-                    }
+                    if (outcome === 'accepted') dismissPwaBar();
                     deferredPrompt = null;
                 }
             });
@@ -674,7 +642,6 @@
             if (pwaBar) pwaBar.style.display = 'none';
         }
 
-        // ================= 2. إعدادات Firebase =================
         const firebaseConfig = {
             apiKey: "AIzaSyAyi3bQqd55atTlULXRTRm5HOuwJthlDaI",
             authDomain: "restaurant-menu-1bfd7.firebaseapp.com",
@@ -696,6 +663,8 @@
         let menuData = [], cart = [];
         let itemPieceCounts = {}; 
         let currentTotal = 0; 
+        let currentSubtotal = 0;
+        let currentDeliveryCost = 0;
         let selectedOrderType = 'دليفري'; 
         let isGlobalStoreOpen = true; 
         let itemsStockStatus = {}; 
@@ -820,13 +789,19 @@
             const btnDel = document.getElementById('btnDelivery');
             const btnTak = document.getElementById('btnTakeaway');
             const addrField = document.getElementById('uAddr');
+            const zoneWrapper = document.getElementById('deliveryZoneWrapper');
+            const deliveryRow = document.getElementById('deliveryRow');
 
             if (type === 'دليفري') {
                 btnDel.classList.add('active'); btnTak.classList.remove('active');
                 if (addrField) addrField.style.display = 'block';
+                if (zoneWrapper) zoneWrapper.style.display = 'block';
+                if (deliveryRow) deliveryRow.style.display = 'flex';
             } else {
                 btnTak.classList.add('active'); btnDel.classList.remove('active');
                 if (addrField) addrField.style.display = 'none';
+                if (zoneWrapper) zoneWrapper.style.display = 'none';
+                if (deliveryRow) deliveryRow.style.display = 'none';
             }
             updateCart();
         }
@@ -1047,7 +1022,21 @@
                 return `<div class="cart-item-card"><img src="${item.img}" class="cart-item-img" onerror="this.onerror=null; this.src='${IMAGES_PATH}default.jpg';"><div class="cart-item-info"><span class="cart-item-name">${item.name}</span><span class="cart-item-price">${item.price} ج.م</span></div><span class="remove-btn" onclick="removeFromCart(${idx})">حذف</span></div>`;
             }).join('');
             
-            currentTotal = subtotal;
+            currentSubtotal = subtotal;
+
+            // حساب التوصيل
+            const zoneSelect = document.getElementById('deliveryZone');
+            if (selectedOrderType === 'دليفري' && zoneSelect && zoneSelect.selectedIndex > 0) {
+                const selectedOpt = zoneSelect.options[zoneSelect.selectedIndex];
+                currentDeliveryCost = parseFloat(selectedOpt.getAttribute('data-price')) || 0;
+            } else {
+                currentDeliveryCost = 0;
+            }
+
+            currentTotal = currentSubtotal + currentDeliveryCost;
+
+            document.getElementById('subtotalAmount').innerText = `${currentSubtotal} ج.م`;
+            document.getElementById('deliveryCostText').innerText = `${currentDeliveryCost} ج.م`;
             document.getElementById('totalAmount').innerText = `${currentTotal} ج.م`;
         }
 
@@ -1059,13 +1048,27 @@
             const p = document.getElementById('uPhone').value.trim();
             const a = document.getElementById('uAddr').value.trim();
             const notes = document.getElementById('uNotes') ? document.getElementById('uNotes').value.trim() : "";
+            const zoneSelect = document.getElementById('deliveryZone');
 
             if(!n || !p || cart.length === 0) { alert("برجاء إدخال اسمك ورقم تليفونك أولاً لتأكيد طلبك."); return; }
-            if (selectedOrderType === "دليفري" && !a) { alert("برجاء كتابة عنوانك بالتفصيل."); return; }
+            
+            let selectedZoneName = "";
+            if (selectedOrderType === "دليفري") {
+                if (!zoneSelect || zoneSelect.value === "") {
+                    alert("برجاء اختيار منطقة التوصيل من القائمة."); return;
+                }
+                if (!a) {
+                    alert("برجاء كتابة عنوانك بالتفصيل."); return;
+                }
+                selectedZoneName = zoneSelect.value;
+            }
 
             let msg = `*طلب جديد - Mizo Sushi 🍣*\n──────────────\n`;
             msg += `👤 *الاسم:* ${n}\n📱 *الموبايل:* ${p}\n🛵 *نوع الطلب:* ${selectedOrderType}\n`;
-            if (selectedOrderType === "دليفري") msg += `📍 *العنوان:* ${a}\n`;
+            
+            if (selectedOrderType === "دليفري") {
+                msg += `📍 *المنطقة:* ${selectedZoneName}\n📍 *العنوان:* ${a}\n`;
+            }
             
             msg += `──────────────\n📦 *الطلبات:*\n`;
             const summary = {}; 
@@ -1074,7 +1077,11 @@
             
             if(notes) msg += `──────────────\n📝 *ملاحظات:* ${notes}\n`;
 
-            msg += `──────────────\n💰 *الإجمالي:* ${currentTotal} جنيه\n_Mizo Sushi ✨_`;
+            msg += `──────────────\n💵 *المجموع:* ${currentSubtotal} جنيه\n`;
+            if (selectedOrderType === "دليفري") {
+                msg += `🛵 *التوصيل:* ${currentDeliveryCost} جنيه\n`;
+            }
+            msg += `💰 *الإجمالي النهائي:* ${currentTotal} جنيه\n_Mizo Sushi ✨_`;
             
             window.open(`https://wa.me/201102598002?text=${encodeURIComponent(msg)}`, '_blank');
         }
