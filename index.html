@@ -522,14 +522,53 @@
             background: var(--card-inner-bg);
             padding: 20px;
             border-radius: 20px;
-            width: 92%;
-            max-width: 440px;
+            width: 95%;
+            max-width: 550px;
             margin: auto;
             border: 1px solid var(--border-color);
             text-align: center;
-            max-height: 85vh;
+            max-height: 90vh;
             display: flex;
             flex-direction: column;
+        }
+
+        .admin-nav-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .admin-tab-btn {
+            flex: 1;
+            padding: 8px 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--main-text);
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .admin-tab-btn.active {
+            background: var(--brand-red);
+            color: #ffffff;
+            border-color: var(--brand-red);
+        }
+
+        .admin-tab-section {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            max-height: 60vh;
+            padding-left: 4px;
+        }
+
+        .admin-tab-section.active {
+            display: flex;
         }
 
         .global-control-box { display: flex; gap: 8px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
@@ -565,6 +604,93 @@
             color: var(--main-text);
             line-height: 1.5;
             margin-bottom: 16px;
+        }
+
+        /* كروت لوحة المطبخ والإحصائيات */
+        .live-order-card {
+            background: var(--input-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 14px;
+            padding: 12px;
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .live-order-card.new-order-highlight {
+            border-color: var(--brand-red);
+            box-shadow: 0 0 10px rgba(255, 0, 21, 0.2);
+        }
+        .live-order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 6px;
+            font-weight: 800;
+            font-size: 0.85rem;
+        }
+        .live-order-status-badge {
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+        .status-prep { background: #fef08a; color: #854d0e; }
+        .status-delivering { background: #bfdbfe; color: #1e40af; }
+        .status-completed { background: #dcfce7; color: #166534; }
+        .status-canceled { background: #fee2e2; color: #991b1b; }
+
+        .live-order-items {
+            font-size: 0.78rem;
+            color: var(--main-text);
+            line-height: 1.4;
+            background: var(--card-inner-bg);
+            padding: 8px;
+            border-radius: 8px;
+            margin: 4px 0;
+        }
+        .live-order-actions {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .live-status-btn {
+            flex: 1;
+            padding: 5px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.68rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .stat-card {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+        }
+        .stat-val { font-size: 1.2rem; font-weight: 900; color: var(--brand-red); }
+        .stat-lbl { font-size: 0.7rem; font-weight: 800; color: var(--desc-text); }
+
+        .best-seller-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            background: var(--input-bg);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            border: 1px solid var(--border-color);
         }
     </style>
 </head>
@@ -721,28 +847,56 @@
         </div>
     </div>
 
-    <!-- لوحة التحكم -->
+    <!-- لوحة التحكم الاحترافية الشاملة -->
     <div class="modal" id="adminModal" style="align-items: center;" onclick="if(event.target==this) closeAdminModal()">
         <div class="admin-modal-content">
             <div id="adminLoginStep">
-                <h3 style="margin-bottom: 10px; font-size: 1rem;">لوحة التحكم بالمنيو</h3>
+                <h3 style="margin-bottom: 10px; font-size: 1rem;">لوحة التحكم والإدارة ⚙️</h3>
                 <input type="password" id="adminPassInput" placeholder="أدخل الرقم السري" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid var(--border-color); text-align:center; font-weight:bold;">
                 <button class="admin-btn admin-btn-open" onclick="checkAdminPass()">دخول</button>
                 <button class="admin-btn admin-btn-cancel" onclick="closeAdminModal()">إلغاء</button>
             </div>
 
             <div id="adminControlStep" style="display: none;">
-                <h3 style="margin-bottom: 8px; font-size: 1rem;">التحكم في حالة المنيو ⚙️</h3>
-                
-                <div class="global-control-box">
-                    <button class="global-btn open" onclick="setGlobalStoreStatus('open')">فتح الكل ✅</button>
-                    <button class="global-btn close" onclick="setGlobalStoreStatus('closed')">قفل الكل (نفدت الكمية) 🚫</button>
+                <div class="admin-nav-tabs">
+                    <button class="admin-tab-btn active" onclick="switchAdminTab('stockTab', this)">حالة المنيو ⚙️</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('kitchenTab', this)">شاشة المطبخ 👨‍🍳</button>
+                    <button class="admin-tab-btn" onclick="switchAdminTab('analyticsTab', this)">الإحصائيات 📊</button>
                 </div>
 
-                <p style="font-size: 0.72rem; color: var(--desc-text); margin-bottom: 6px;">أو التحكم في توفر كل صنف بشكل منفصل:</p>
-                <div class="admin-items-list" id="adminItemsContainer"></div>
+                <!-- تبويب التحكم بالمنيو -->
+                <div id="stockTab" class="admin-tab-section active">
+                    <div class="global-control-box">
+                        <button class="global-btn open" onclick="setGlobalStoreStatus('open')">فتح الكل ✅</button>
+                        <button class="global-btn close" onclick="setGlobalStoreStatus('closed')">قفل الكل (نفدت الكمية) 🚫</button>
+                    </div>
+                    <p style="font-size: 0.72rem; color: var(--desc-text); margin-bottom: 6px;">التحكم في توفر كل صنف منفصلاً:</p>
+                    <div class="admin-items-list" id="adminItemsContainer"></div>
+                </div>
 
-                <button class="admin-btn admin-btn-cancel" onclick="closeAdminModal()" style="margin-top: 5px;">إغلاق اللوحة</button>
+                <!-- تبويب شاشة المطبخ والطلبات الحية -->
+                <div id="kitchenTab" class="admin-tab-section">
+                    <p style="font-size: 0.72rem; color: var(--desc-text); margin-bottom: 6px;">الطلبات الواردة لحظياً المباشرة:</p>
+                    <div id="liveOrdersContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                </div>
+
+                <!-- تبويب الإحصائيات والأصناف الأكثر مبيعاً -->
+                <div id="analyticsTab" class="admin-tab-section">
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-val" id="statTotalSales">0 ج.م</div>
+                            <div class="stat-lbl">إجمالي المبيعات</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-val" id="statTotalOrders">0</div>
+                            <div class="stat-lbl">عدد الطلبات</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.75rem; font-weight:800; color: var(--main-text); margin-bottom: 6px; text-align:right;">🏆 الأصناف الأكثر طلباً (Best Sellers):</p>
+                    <div id="bestSellersContainer" style="display: flex; flex-direction: column; gap: 6px;"></div>
+                </div>
+
+                <button class="admin-btn admin-btn-cancel" onclick="closeAdminModal()" style="margin-top: 8px;">إغلاق اللوحة</button>
             </div>
         </div>
     </div>
@@ -830,6 +984,8 @@
         let currentDeliveryCost = 0;
         let isGlobalStoreOpen = true; 
         let itemsStockStatus = {}; 
+        let liveOrdersData = {};
+        let initialLoadDone = false;
 
         function cleanKey(name) { return name.replace(/[.#$\[\]]/g, "_"); }
 
@@ -847,6 +1003,32 @@
                 renderAdminItemsList();
             }
         });
+
+        // الاستماع للطلبات اللحظية في المطبخ وللإحصائيات
+        db.ref('orders').on('value', (snapshot) => {
+            liveOrdersData = snapshot.val() || {};
+            if (initialLoadDone && document.getElementById('adminControlStep').style.display === 'block') {
+                playBellSound();
+            }
+            initialLoadDone = true;
+            renderLiveKitchenOrders();
+            calculateAnalytics();
+        });
+
+        function playBellSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.6);
+            } catch(e){}
+        }
 
         function refreshMenuDisplay() {
             if (menuData.length > 0) {
@@ -886,9 +1068,18 @@
                 document.getElementById('adminLoginStep').style.display = 'none';
                 document.getElementById('adminControlStep').style.display = 'block';
                 renderAdminItemsList();
+                renderLiveKitchenOrders();
+                calculateAnalytics();
             } else {
                 alert('الرقم السري غير صحيح!');
             }
+        }
+
+        function switchAdminTab(tabId, btn) {
+            document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-section').forEach(s => s.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
         }
 
         function setGlobalStoreStatus(status) {
@@ -923,6 +1114,93 @@
             const newStatus = (currentStatus === 'out') ? 'in' : 'out';
 
             db.ref(`items_stock/${itemKey}`).set(newStatus).catch((err) => alert('حدث خطأ أثناء الحفظ: ' + err.message));
+        }
+
+        // عرض طلبات المطبخ اللحظية
+        function renderLiveKitchenOrders() {
+            const container = document.getElementById('liveOrdersContainer');
+            if (!container) return;
+
+            const orderKeys = Object.keys(liveOrdersData).reverse();
+            if (orderKeys.length === 0) {
+                container.innerHTML = `<p style="font-size: 0.8rem; color: var(--desc-text); text-align:center; padding:15px;">لا توجد طلبات واردة حتى الآن 📭</p>`;
+                return;
+            }
+
+            container.innerHTML = orderKeys.map(key => {
+                const ord = liveOrdersData[key];
+                const status = ord.status || 'prep';
+                
+                let badgeClass = 'status-prep', statusTxt = '⏳ جاري التجهيز';
+                if (status === 'delivering') { badgeClass = 'status-delivering'; statusTxt = '🛵 خرج للتوصيل'; }
+                else if (status === 'completed') { badgeClass = 'status-completed'; statusTxt = '✅ تم التسليم'; }
+                else if (status === 'canceled') { badgeClass = 'status-canceled'; statusTxt = '❌ ملغي'; }
+
+                const itemsStr = ord.items ? ord.items.map(i => `• ${i.name} (x${i.qty || 1})`).join('<br>') : '';
+
+                return `
+                <div class="live-order-card">
+                    <div class="live-order-header">
+                        <span>👤 ${ord.userName || 'عميل'}</span>
+                        <span class="live-order-status-badge ${badgeClass}">${statusTxt}</span>
+                    </div>
+                    <div style="font-size:0.75rem; color:var(--desc-text);">📞 ${ord.userPhone || ''} | 📍 ${ord.zone || ''}</div>
+                    <div class="live-order-items">${itemsStr}</div>
+                    <div style="font-size:0.78rem; font-weight:800; color:var(--brand-red);">💰 الإجمالي: ${ord.totalAmount || 0} ج.م</div>
+                    <div class="live-order-actions">
+                        <button class="live-status-btn" style="background:#fef08a; color:#854d0e;" onclick="updateOrderStatus('${key}', 'prep')">تجهيز ⏳</button>
+                        <button class="live-status-btn" style="background:#bfdbfe; color:#1e40af;" onclick="updateOrderStatus('${key}', 'delivering')">توصيل 🛵</button>
+                        <button class="live-status-btn" style="background:#dcfce7; color:#166534;" onclick="updateOrderStatus('${key}', 'completed')">تم ✅</button>
+                        <button class="live-status-btn" style="background:#fee2e2; color:#991b1b;" onclick="updateOrderStatus('${key}', 'canceled')">إلغاء ❌</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            db.ref(`orders/${orderId}/status`).set(newStatus);
+        }
+
+        // حساب الإحصائيات والأصناف الأكثر مبيعاً
+        function calculateAnalytics() {
+            let totalSales = 0;
+            let totalOrdersCount = 0;
+            const itemCounts = {};
+
+            Object.values(liveOrdersData).forEach(ord => {
+                if (ord.status !== 'canceled') {
+                    totalOrdersCount++;
+                    totalSales += (parseFloat(ord.totalAmount) || 0);
+
+                    if (ord.items) {
+                        ord.items.forEach(it => {
+                            const rawName = it.name.split(' (')[0].trim();
+                            itemCounts[rawName] = (itemCounts[rawName] || 0) + (it.qty || 1);
+                        });
+                    }
+                }
+            });
+
+            const salesEl = document.getElementById('statTotalSales');
+            const countEl = document.getElementById('statTotalOrders');
+            if (salesEl) salesEl.innerText = `${totalSales} ج.م`;
+            if (countEl) countEl.innerText = totalOrdersCount;
+
+            const sortedItems = Object.entries(itemCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            const bestContainer = document.getElementById('bestSellersContainer');
+
+            if (bestContainer) {
+                if (sortedItems.length === 0) {
+                    bestContainer.innerHTML = `<p style="font-size:0.75rem; color:var(--desc-text); text-align:center;">لا توجد بيانات كافية حالياً</p>`;
+                } else {
+                    bestContainer.innerHTML = sortedItems.map(([name, count], index) => `
+                        <div class="best-seller-row">
+                            <span>#${index + 1} ${name}</span>
+                            <span style="color:var(--brand-red);">${count} طلب</span>
+                        </div>
+                    `).join('');
+                }
+            }
         }
 
         function handleThemeToggle() {
@@ -1359,14 +1637,37 @@
                 return;
             }
 
+            // إعداد ملخص العناصر لحفظها في Firebase ولإرسالها للواتساب
+            const summaryArr = [];
+            const summary = {}; 
+            cart.forEach(item => { summary[item.name] = (summary[item.name] || 0) + 1; });
+            for (const [itemKey, qty] of Object.entries(summary)) {
+                summaryArr.push({ name: itemKey, qty: qty });
+            }
+
+            // حفظ الطلب تلقائياً في Firebase
+            const newOrderRef = db.ref('orders').push();
+            newOrderRef.set({
+                userName: n,
+                userPhone: p,
+                userAddr: a,
+                zone: selectedZone.name,
+                deliveryFee: currentDeliveryCost,
+                subtotal: currentSubtotal,
+                totalAmount: currentTotal,
+                notes: notes,
+                items: summaryArr,
+                status: 'prep',
+                timestamp: Date.now()
+            });
+
+            // تجهيز نص رسالة الواتساب
             let msg = `*طلب جديد - Mizo Sushi 🍣*\n──────────────\n`;
             msg += `👤 *الاسم:* ${n}\n📱 *الموبايل:* ${p}\n🛵 *نوع الطلب:* دليفري\n`;
             msg += `📍 *المنطقة:* ${selectedZone.name}\n📍 *العنوان:* ${a}\n`;
             
             msg += `──────────────\n📦 *الطلبات:*\n`;
-            const summary = {}; 
-            cart.forEach(item => { summary[item.name] = (summary[item.name] || 0) + 1; });
-            for (const [itemKey, qty] of Object.entries(summary)) msg += `• ${itemKey} × ${qty}\n`;
+            summaryArr.forEach(i => { msg += `• ${i.name} × ${i.qty}\n`; });
             
             if(notes) msg += `──────────────\n📝 *ملاحظات:* ${notes}\n`;
 
