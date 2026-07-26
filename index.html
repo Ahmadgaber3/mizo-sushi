@@ -418,6 +418,21 @@
             font-weight: 800;
         }
 
+        .chat-btn-trigger {
+            background: var(--brand-red);
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
         /* ================= زر اختيار منطقة التوصيل ================= */
         .select-zone-trigger-btn {
             width: 100%;
@@ -526,7 +541,7 @@
 
         .admin-trigger { position: absolute; bottom: 10px; left: 10px; width: 30px; height: 30px; background: transparent; border: none; cursor: pointer; opacity: 0.25; z-index: 999; font-size: 1.1rem; }
 
-        /* ================= النوافذ ================= */
+        /* ================= النوافذ والشات ================= */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; justify-content: center; align-items: flex-end; backdrop-filter: blur(4px); }
         .modal-content { background: var(--card-inner-bg); color: var(--main-text); width: 100%; max-width: 480px; padding: 18px 20px; border-radius: 24px 22px 0 0; max-height: 85vh; overflow-y: auto; box-shadow: 0 -8px 30px rgba(0,0,0,0.3); }
 
@@ -632,7 +647,7 @@
         .alert-popup-title { font-size: 1.1rem; font-weight: 800; color: var(--brand-red); margin-bottom: 8px; }
         .alert-popup-desc { font-size: 0.88rem; font-weight: 700; color: var(--main-text); line-height: 1.5; margin-bottom: 16px; }
 
-        /* كروت لوحة المطبخ والإحصائيات */
+        /* كروت لوحة المطبخ */
         .live-order-card {
             background: var(--input-bg);
             border: 1.5px solid var(--border-color);
@@ -642,26 +657,45 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
+            position: relative;
         }
-        .live-order-card.new-order-highlight {
-            border-color: var(--brand-red);
-            box-shadow: 0 0 10px rgba(255, 0, 21, 0.2);
+        
+        .delete-order-x-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.8rem;
+            cursor: pointer;
         }
+
         .live-order-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px dashed var(--border-color);
             padding-bottom: 6px;
+            padding-left: 28px;
             font-weight: 800;
             font-size: 0.85rem;
         }
+
         .live-order-status-badge {
             padding: 3px 8px;
             border-radius: 8px;
             font-size: 0.7rem;
             font-weight: 800;
         }
+
         .status-prep { background: #fef08a; color: #854d0e; }
         .status-delivering { background: #bfdbfe; color: #1e40af; }
         .status-completed { background: #dcfce7; color: #166534; }
@@ -676,11 +710,13 @@
             border-radius: 8px;
             margin: 4px 0;
         }
+
         .live-order-actions {
             display: flex;
             gap: 4px;
             margin-top: 4px;
         }
+
         .live-status-btn {
             flex: 1;
             padding: 5px;
@@ -691,21 +727,76 @@
             cursor: pointer;
         }
 
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-        .stat-card { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; text-align: center; }
-        .stat-val { font-size: 1.2rem; font-weight: 900; color: var(--brand-red); }
-        .stat-lbl { font-size: 0.7rem; font-weight: 800; color: var(--desc-text); }
-
-        .best-seller-row {
+        /* نافذة الشات */
+        .chat-box-container {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 10px;
+            flex-direction: column;
+            height: 320px;
             background: var(--input-bg);
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 800;
+            border-radius: 12px;
             border: 1px solid var(--border-color);
+            padding: 8px;
+            margin-top: 10px;
+        }
+
+        .chat-messages-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 6px;
+        }
+
+        .chat-msg-bubble {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .chat-msg-bubble.user {
+            background: var(--brand-red);
+            color: #ffffff;
+            align-self: flex-start;
+            border-bottom-right-radius: 2px;
+        }
+
+        .chat-msg-bubble.admin {
+            background: #1f1f1f;
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .chat-input-field {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--card-inner-bg);
+            color: var(--main-text);
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .chat-send-btn {
+            background: var(--brand-red);
+            color: #ffffff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 0.8rem;
         }
     </style>
 </head>
@@ -764,6 +855,9 @@
         <div style="font-size: 0.72rem; color: var(--desc-text); text-align: right;" id="userTrackerDesc">
             تم استلام طلبك في المطبخ وجاري التجهيز الآن بكل حب 🍣
         </div>
+        <button class="chat-btn-trigger" onclick="openUserChatModal()">
+            💬 شات مع المطعم
+        </button>
     </div>
 
     <!-- شريط تثبيت التطبيق -->
@@ -848,6 +942,23 @@
         </div>
     </div>
 
+    <!-- نافذة الشات للزبون والمطعم -->
+    <div class="modal" id="chatModal" style="z-index: 2800;" onclick="if(event.target==this) closeChatModal()">
+        <div class="modal-content" style="border-radius: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                <h3 style="font-size: 0.95rem; font-weight: 800;" id="chatTitle">💬 محادثة الأوردر</h3>
+                <span onclick="closeChatModal()" style="cursor: pointer; font-weight: 800; font-size: 1.1rem;">✕</span>
+            </div>
+            <div class="chat-box-container">
+                <div class="chat-messages-list" id="chatMessagesList"></div>
+                <div class="chat-input-row">
+                    <input type="text" id="chatInputField" class="chat-input-field" placeholder="اكتب رسالتك هنا..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                    <button class="chat-send-btn" onclick="sendChatMessage()">إرسال</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- نافذة تنبيه الحد الأدنى للقطع -->
     <div class="modal" id="minPiecesModal" style="align-items: center; z-index: 3000;" onclick="if(event.target==this) closeMinPiecesModal()">
         <div class="modal-content" style="border-radius: 20px; max-width: 380px; margin: auto;">
@@ -887,7 +998,6 @@
                 <div class="admin-nav-tabs">
                     <button class="admin-tab-btn active" onclick="switchAdminTab('stockTab', this)">حالة المنيو ⚙️</button>
                     <button class="admin-tab-btn" onclick="switchAdminTab('kitchenTab', this)">شاشة المطبخ 👨‍🍳</button>
-                    <button class="admin-tab-btn" onclick="switchAdminTab('analyticsTab', this)">الإحصائيات 📊</button>
                 </div>
 
                 <!-- تبويب التحكم بالمنيو -->
@@ -904,22 +1014,6 @@
                 <div id="kitchenTab" class="admin-tab-section">
                     <p style="font-size: 0.72rem; color: var(--desc-text); margin-bottom: 6px;">الطلبات الواردة لحظياً المباشرة:</p>
                     <div id="liveOrdersContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                </div>
-
-                <!-- تبويب الإحصائيات والأصناف الأكثر مبيعاً -->
-                <div id="analyticsTab" class="admin-tab-section">
-                    <div class="stat-grid">
-                        <div class="stat-card">
-                            <div class="stat-val" id="statTotalSales">0 ج.م</div>
-                            <div class="stat-lbl">إجمالي المبيعات</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-val" id="statTotalOrders">0</div>
-                            <div class="stat-lbl">عدد الطلبات</div>
-                        </div>
-                    </div>
-                    <p style="font-size: 0.75rem; font-weight:800; color: var(--main-text); margin-bottom: 6px; text-align:right;">🏆 الأصناف الأكثر طلباً (Best Sellers):</p>
-                    <div id="bestSellersContainer" style="display: flex; flex-direction: column; gap: 6px;"></div>
                 </div>
 
                 <button class="admin-btn admin-btn-cancel" onclick="closeAdminModal()" style="margin-top: 8px;">إغلاق اللوحة</button>
@@ -1013,6 +1107,8 @@
         let liveOrdersData = {};
         let initialLoadDone = false;
         let lastUserOrderStatus = null;
+        let activeChatOrderId = null;
+        let chatSenderRole = 'user'; 
 
         function cleanKey(name) { return name.replace(/[.#$\[\]]/g, "_"); }
 
@@ -1031,7 +1127,7 @@
             }
         });
 
-        // الاستماع للطلبات اللحظية في المطبخ وللإحصائيات
+        // الاستماع للطلبات اللحظية في المطبخ
         db.ref('orders').on('value', (snapshot) => {
             liveOrdersData = snapshot.val() || {};
             if (initialLoadDone && document.getElementById('adminControlStep').style.display === 'block') {
@@ -1039,10 +1135,9 @@
             }
             initialLoadDone = true;
             renderLiveKitchenOrders();
-            calculateAnalytics();
+            checkAndRestoreUserOrder();
         });
 
-        // تشغيل صوت الجرس الخاص بالمطبخ عند ورود أوردر جديد
         function playKitchenBellSound() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1058,7 +1153,6 @@
             } catch(e){}
         }
 
-        // تشغيل صوت التنبيه الهادئ للزبون عند تحديث حالة أوردره
         function playUserNotificationSound() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1074,54 +1168,54 @@
             } catch(e){}
         }
 
-        // الاستماع اللحظي لتتبع طلب الزبون الحصري
-        function initUserOrderTracking() {
+        // استرجاع وتثبيت حالة الطلب للزبون عند إعادة فتح التطبيق
+        function checkAndRestoreUserOrder() {
             const activeOrderId = localStorage.getItem('mizo_active_order_id');
             if (!activeOrderId) return;
 
-            db.ref(`orders/${activeOrderId}`).on('value', (snapshot) => {
-                const order = snapshot.val();
-                const trackerBar = document.getElementById('userOrderTrackerBar');
-                const tag = document.getElementById('userTrackerStatusTag');
-                const desc = document.getElementById('userTrackerDesc');
+            const order = liveOrdersData[activeOrderId];
+            const trackerBar = document.getElementById('userOrderTrackerBar');
+            const tag = document.getElementById('userTrackerStatusTag');
+            const desc = document.getElementById('userTrackerDesc');
 
-                if (!order || !trackerBar) return;
+            if (!order) {
+                if(trackerBar) trackerBar.style.display = 'none';
+                return;
+            }
 
-                const currentStatus = order.status || 'prep';
-                trackerBar.style.display = 'flex';
+            const currentStatus = order.status || 'prep';
+            if(trackerBar) trackerBar.style.display = 'flex';
 
-                // تشغيل صوت التنبيه فقط إذا تغيرت حالة الطلب عند الزبون
-                if (lastUserOrderStatus && lastUserOrderStatus !== currentStatus) {
-                    playUserNotificationSound();
-                }
-                lastUserOrderStatus = currentStatus;
+            if (lastUserOrderStatus && lastUserOrderStatus !== currentStatus) {
+                playUserNotificationSound();
+            }
+            lastUserOrderStatus = currentStatus;
 
-                if (currentStatus === 'prep') {
-                    tag.className = 'tracker-status-tag status-prep';
-                    tag.innerText = '⏳ جاري التجهيز';
-                    desc.innerText = 'تم استلام طلبك في المطبخ وجاري التجهيز الآن بكل حب 🍣';
-                } else if (currentStatus === 'delivering') {
-                    tag.className = 'tracker-status-tag status-delivering';
-                    tag.innerText = '🛵 خرج للتوصيل';
-                    desc.innerText = 'طلبك خرج الآن مع الدليفري وفي طريقه إليك! 🎉';
-                } else if (currentStatus === 'completed') {
-                    tag.className = 'tracker-status-tag status-completed';
-                    tag.innerText = '✅ تم التسليم';
-                    desc.innerText = 'نتمنى لك وجبة شهية! شكراً لطلبك من Mizo Sushi 🍣';
-                    setTimeout(() => {
-                        trackerBar.style.display = 'none';
-                        localStorage.removeItem('mizo_active_order_id');
-                    }, 10000);
-                } else if (currentStatus === 'canceled') {
-                    tag.className = 'tracker-status-tag status-canceled';
-                    tag.innerText = '❌ تم إلغاء الطلب';
-                    desc.innerText = 'تم إلغاء الطلب. يرجى التواصل مع المطعم لأي استفسار.';
-                    setTimeout(() => {
-                        trackerBar.style.display = 'none';
-                        localStorage.removeItem('mizo_active_order_id');
-                    }, 8000);
-                }
-            });
+            if (currentStatus === 'prep') {
+                tag.className = 'tracker-status-tag status-prep';
+                tag.innerText = '⏳ جاري التجهيز';
+                desc.innerText = 'تم استلام طلبك في المطبخ وجاري التجهيز الآن بكل حب 🍣';
+            } else if (currentStatus === 'delivering') {
+                tag.className = 'tracker-status-tag status-delivering';
+                tag.innerText = '🛵 خرج للتوصيل';
+                desc.innerText = 'طلبك خرج الآن مع الدليفري وفي طريقه إليك! 🎉';
+            } else if (currentStatus === 'completed') {
+                tag.className = 'tracker-status-tag status-completed';
+                tag.innerText = '✅ تم التسليم';
+                desc.innerText = 'نتمنى لك وجبة شهية! شكراً لطلبك من Mizo Sushi 🍣';
+                setTimeout(() => {
+                    if(trackerBar) trackerBar.style.display = 'none';
+                    localStorage.removeItem('mizo_active_order_id');
+                }, 10000);
+            } else if (currentStatus === 'canceled') {
+                tag.className = 'tracker-status-tag status-canceled';
+                tag.innerText = '❌ تم إلغاء الطلب';
+                desc.innerText = 'تم إلغاء الطلب. يرجى التواصل مع المطعم لأي استفسار.';
+                setTimeout(() => {
+                    if(trackerBar) trackerBar.style.display = 'none';
+                    localStorage.removeItem('mizo_active_order_id');
+                }, 8000);
+            }
         }
 
         function refreshMenuDisplay() {
@@ -1163,7 +1257,6 @@
                 document.getElementById('adminControlStep').style.display = 'block';
                 renderAdminItemsList();
                 renderLiveKitchenOrders();
-                calculateAnalytics();
             } else {
                 alert('الرقم السري غير صحيح!');
             }
@@ -1210,7 +1303,7 @@
             db.ref(`items_stock/${itemKey}`).set(newStatus).catch((err) => alert('حدث خطأ أثناء الحفظ: ' + err.message));
         }
 
-        // عرض طلبات المطبخ اللحظية
+        // عرض طلبات المطبخ اللحظية مع زر حذف ❌
         function renderLiveKitchenOrders() {
             const container = document.getElementById('liveOrdersContainer');
             if (!container) return;
@@ -1231,16 +1324,21 @@
                 else if (status === 'canceled') { badgeClass = 'status-canceled'; statusTxt = '❌ ملغي'; }
 
                 const itemsStr = ord.items ? ord.items.map(i => `• ${i.name} (x${i.qty || 1})`).join('<br>') : '';
+                const chatCount = ord.chats ? Object.keys(ord.chats).length : 0;
 
                 return `
                 <div class="live-order-card">
+                    <button class="delete-order-x-btn" title="حذف الطلب نهائياً" onclick="deleteOrderFromKitchen('${key}')">✕</button>
                     <div class="live-order-header">
                         <span>👤 ${ord.userName || 'عميل'}</span>
                         <span class="live-order-status-badge ${badgeClass}">${statusTxt}</span>
                     </div>
                     <div style="font-size:0.75rem; color:var(--desc-text);">📞 ${ord.userPhone || ''} | 📍 ${ord.zone || ''}</div>
                     <div class="live-order-items">${itemsStr}</div>
-                    <div style="font-size:0.78rem; font-weight:800; color:var(--brand-red);">💰 الإجمالي: ${ord.totalAmount || 0} ج.م</div>
+                    <div style="font-size:0.78rem; font-weight:800; color:var(--brand-red); display:flex; justify-content:space-between; align-items:center;">
+                        <span>💰 الإجمالي: ${ord.totalAmount || 0} ج.م</span>
+                        <button class="chat-btn-trigger" style="margin:0;" onclick="openAdminChatModal('${key}', '${ord.userName}')">💬 الشات (${chatCount})</button>
+                    </div>
                     <div class="live-order-actions">
                         <button class="live-status-btn" style="background:#fef08a; color:#854d0e;" onclick="updateOrderStatus('${key}', 'prep')">تجهيز ⏳</button>
                         <button class="live-status-btn" style="background:#bfdbfe; color:#1e40af;" onclick="updateOrderStatus('${key}', 'delivering')">توصيل 🛵</button>
@@ -1251,50 +1349,69 @@
             }).join('');
         }
 
+        // مسح الأوردر من السجل بالكامل
+        function deleteOrderFromKitchen(orderId) {
+            if (confirm('هل أنت تأكد من حذف هذا الأوردر نهائياً من السجل؟')) {
+                db.ref(`orders/${orderId}`).remove();
+            }
+        }
+
         function updateOrderStatus(orderId, newStatus) {
             db.ref(`orders/${orderId}/status`).set(newStatus);
         }
 
-        // حساب الإحصائيات والأصناف الأكثر مبيعاً
-        function calculateAnalytics() {
-            let totalSales = 0;
-            let totalOrdersCount = 0;
-            const itemCounts = {};
+        /* ================= نظام الشات اللحظي لكل أوردر ================= */
+        function openUserChatModal() {
+            const activeOrderId = localStorage.getItem('mizo_active_order_id');
+            if (!activeOrderId) return;
+            chatSenderRole = 'user';
+            activeChatOrderId = activeOrderId;
+            document.getElementById('chatTitle').innerText = "💬 شات مع المطعم (متابعة الأوردر)";
+            document.getElementById('chatModal').style.display = 'flex';
+            listenToChatMessages(activeOrderId);
+        }
 
-            Object.values(liveOrdersData).forEach(ord => {
-                if (ord.status !== 'canceled') {
-                    totalOrdersCount++;
-                    totalSales += (parseFloat(ord.totalAmount) || 0);
+        function openAdminChatModal(orderId, userName) {
+            chatSenderRole = 'admin';
+            activeChatOrderId = orderId;
+            document.getElementById('chatTitle').innerText = `💬 محادثة مع: ${userName}`;
+            document.getElementById('chatModal').style.display = 'flex';
+            listenToChatMessages(orderId);
+        }
 
-                    if (ord.items) {
-                        ord.items.forEach(it => {
-                            const rawName = it.name.split(' (')[0].trim();
-                            itemCounts[rawName] = (itemCounts[rawName] || 0) + (it.qty || 1);
-                        });
-                    }
-                }
+        function closeChatModal() {
+            document.getElementById('chatModal').style.display = 'none';
+            if (activeChatOrderId) {
+                db.ref(`orders/${activeChatOrderId}/chats`).off();
+            }
+        }
+
+        function listenToChatMessages(orderId) {
+            const list = document.getElementById('chatMessagesList');
+            db.ref(`orders/${orderId}/chats`).on('value', (snapshot) => {
+                const chats = snapshot.val() || {};
+                list.innerHTML = Object.values(chats).map(msg => {
+                    const isUser = msg.sender === 'user';
+                    const roleClass = isUser ? 'user' : 'admin';
+                    const label = isUser ? 'أنت' : 'المطعم';
+                    return `<div class="chat-msg-bubble ${roleClass}"><b>${label}:</b> ${msg.text}</div>`;
+                }).join('');
+                list.scrollTop = list.scrollHeight;
+            });
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInputField');
+            const text = input.value.trim();
+            if (!text || !activeChatOrderId) return;
+
+            db.ref(`orders/${activeChatOrderId}/chats`).push({
+                sender: chatSenderRole,
+                text: text,
+                timestamp: Date.now()
             });
 
-            const salesEl = document.getElementById('statTotalSales');
-            const countEl = document.getElementById('statTotalOrders');
-            if (salesEl) salesEl.innerText = `${totalSales} ج.م`;
-            if (countEl) countEl.innerText = totalOrdersCount;
-
-            const sortedItems = Object.entries(itemCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
-            const bestContainer = document.getElementById('bestSellersContainer');
-
-            if (bestContainer) {
-                if (sortedItems.length === 0) {
-                    bestContainer.innerHTML = `<p style="font-size:0.75rem; color:var(--desc-text); text-align:center;">لا توجد بيانات كافية حالياً</p>`;
-                } else {
-                    bestContainer.innerHTML = sortedItems.map(([name, count], index) => `
-                        <div class="best-seller-row">
-                            <span>#${index + 1} ${name}</span>
-                            <span style="color:var(--brand-red);">${count} طلب</span>
-                        </div>
-                    `).join('');
-                }
-            }
+            input.value = '';
         }
 
         function handleThemeToggle() {
@@ -1317,7 +1434,6 @@
 
             loadMenu();
             renderZoneList();
-            initUserOrderTracking();
         });
 
         function renderZoneList() {
@@ -1713,7 +1829,6 @@
             if (!selectedZone) { alert("برجاء اضغط لاختيار منطقة التوصيل أولاً."); return; }
             if (!a) { alert("برجاء كتابة عنوانك بالتفصيل."); return; }
 
-            // حساب إجمالي عدد القطع في الطلب فقط للأصناف القابلة للعد
             let totalPieces = 0;
             cart.forEach(item => {
                 if (item.pieces && item.pieces > 0) {
@@ -1721,13 +1836,11 @@
                 }
             });
 
-            // التحقق من أن عدد القطع لا يقل عن 10 قطع
             if (totalPieces < 10) {
                 openMinPiecesModal(totalPieces);
                 return;
             }
 
-            // إعداد ملخص العناصر لحفظها في Firebase ولإرسالها للواتساب
             const summaryArr = [];
             const summary = {}; 
             cart.forEach(item => { summary[item.name] = (summary[item.name] || 0) + 1; });
@@ -1735,7 +1848,7 @@
                 summaryArr.push({ name: itemKey, qty: qty });
             }
 
-            // حفظ الطلب تلقائياً في Firebase
+            // حفظ الطلب في Firebase
             const newOrderRef = db.ref('orders').push();
             const orderId = newOrderRef.key;
 
@@ -1753,11 +1866,9 @@
                 timestamp: Date.now()
             });
 
-            // حفظ رقم الأوردر في الـ LocalStorage لتفعيل تتبع الطلب للزبون
+            // حفظ كود الطلب في LocalStorage
             localStorage.setItem('mizo_active_order_id', orderId);
-            initUserOrderTracking();
 
-            // تجهيز نص رسالة الواتساب
             let msg = `*طلب جديد - Mizo Sushi 🍣*\n──────────────\n`;
             msg += `👤 *الاسم:* ${n}\n📱 *الموبايل:* ${p}\n🛵 *نوع الطلب:* دليفري\n`;
             msg += `📍 *المنطقة:* ${selectedZone.name}\n📍 *العنوان:* ${a}\n`;
