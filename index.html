@@ -1109,6 +1109,7 @@
         let lastUserOrderStatus = null;
         let activeChatOrderId = null;
         let chatSenderRole = 'user'; 
+        let lastChatCount = 0;
 
         function cleanKey(name) { return name.replace(/[.#$\[\]]/g, "_"); }
 
@@ -1127,7 +1128,35 @@
             }
         });
 
-        // الاستماع للطلبات اللحظية في المطبخ
+        function requestNotificationPermission() {
+            if ("Notification" in window && Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+        }
+
+        function triggerMobileNotification(title, body) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.4);
+            } catch(e){}
+
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification(title, {
+                    body: body,
+                    icon: './images/logooo.png'
+                });
+            }
+        }
+
+        // الاستماع للطلبات اللحظية في المطبخ وللزبون
         db.ref('orders').on('value', (snapshot) => {
             liveOrdersData = snapshot.val() || {};
             if (initialLoadDone && document.getElementById('adminControlStep').style.display === 'block') {
@@ -1153,21 +1182,6 @@
             } catch(e){}
         }
 
-        function playUserNotificationSound() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(880, ctx.currentTime); 
-                gain.gain.setValueAtTime(0.2, ctx.currentTime);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.35);
-            } catch(e){}
-        }
-
         // استرجاع وتثبيت حالة الطلب للزبون عند إعادة فتح التطبيق
         function checkAndRestoreUserOrder() {
             const activeOrderId = localStorage.getItem('mizo_active_order_id');
@@ -1187,7 +1201,12 @@
             if(trackerBar) trackerBar.style.display = 'flex';
 
             if (lastUserOrderStatus && lastUserOrderStatus !== currentStatus) {
-                playUserNotificationSound();
+                let statusMsg = "تحديث جديد في حالة أوردرك!";
+                if (currentStatus === 'delivering') statusMsg = "🛵 أوردرك خرج للتوصيل وهو في طريقه إليك الآن!";
+                else if (currentStatus === 'completed') statusMsg = "✅ تم تسليم الأوردر بنجاح. وبالهناء والشفاء!";
+                else if (currentStatus === 'canceled') statusMsg = "❌ تم إلغاء الأوردر.";
+                
+                triggerMobileNotification("Mizo Sushi 🍣", statusMsg);
             }
             lastUserOrderStatus = currentStatus;
 
@@ -1215,6 +1234,17 @@
                     if(trackerBar) trackerBar.style.display = 'none';
                     localStorage.removeItem('mizo_active_order_id');
                 }, 8000);
+            }
+
+            if (order.chats) {
+                const chatCount = Object.keys(order.chats).length;
+                if (lastChatCount && chatCount > lastChatCount) {
+                    const lastChat = Object.values(order.chats).pop();
+                    if (lastChat.sender === 'admin') {
+                        triggerMobileNotification("رسالة جديدة من المطعم 💬", lastChat.text);
+                    }
+                }
+                lastChatCount = chatCount;
             }
         }
 
@@ -1349,7 +1379,6 @@
             }).join('');
         }
 
-        // مسح الأوردر من السجل بالكامل
         function deleteOrderFromKitchen(orderId) {
             if (confirm('هل أنت تأكد من حذف هذا الأوردر نهائياً من السجل؟')) {
                 db.ref(`orders/${orderId}`).remove();
@@ -1432,6 +1461,7 @@
             const themeBtn = document.getElementById('themeToggleBtn');
             if (themeBtn) themeBtn.addEventListener('click', handleThemeToggle);
 
+            requestNotificationPermission();
             loadMenu();
             renderZoneList();
         });
@@ -1848,7 +1878,6 @@
                 summaryArr.push({ name: itemKey, qty: qty });
             }
 
-            // حفظ الطلب في Firebase
             const newOrderRef = db.ref('orders').push();
             const orderId = newOrderRef.key;
 
@@ -1866,7 +1895,6 @@
                 timestamp: Date.now()
             });
 
-            // حفظ كود الطلب في LocalStorage
             localStorage.setItem('mizo_active_order_id', orderId);
 
             let msg = `*طلب جديد - Mizo Sushi 🍣*\n──────────────\n`;
