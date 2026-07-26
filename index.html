@@ -418,6 +418,11 @@
             font-weight: 800;
         }
 
+        .status-prep { background: #fef08a; color: #854d0e; }
+        .status-delivering { background: #bfdbfe; color: #1e40af; }
+        .status-completed { background: #dcfce7; color: #166534; }
+        .status-canceled { background: #fee2e2; color: #991b1b; }
+
         .chat-btn-trigger {
             background: var(--brand-red);
             color: #ffffff;
@@ -1142,6 +1147,17 @@
         let activeChatOrderId = null;
         let chatSenderRole = 'user'; 
 
+        // فحص هل المطعم ضمن مواعيد العمل (يومياً من 3:00 م لـ 11:00 م والجمعة إجازة)
+        function isWorkingHours() {
+            const now = new Date();
+            const day = now.getDay(); // 0 = Sunday, 5 = Friday
+            if (day === 5) return false; // الجمعة إجازة رسمية
+
+            const hour = now.getHours(); // 0 - 23
+            // من 3 مساءً (15) إلى 11 مساءً (23)
+            return hour >= 15 && hour < 23;
+        }
+
         function cleanKey(name) { return name.replace(/[.#$\[\]]/g, "_"); }
 
         db.ref('global_restaurant_status').on('value', (snapshot) => {
@@ -1284,7 +1300,13 @@
             const statusIcon = document.getElementById('statusIcon');
             const statusText = document.getElementById('statusText');
 
-            if (isGlobalStoreOpen) {
+            const openHours = isWorkingHours();
+
+            if (!openHours) {
+                if(banner) banner.className = 'store-status-banner closed';
+                if(statusIcon) statusIcon.innerText = '🔴';
+                if(statusText) statusText.innerText = 'المطعم مغلق الآن خارج مواعيد العمل ⏰';
+            } else if (isGlobalStoreOpen) {
                 if(banner) banner.className = 'store-status-banner open';
                 if(statusIcon) statusIcon.innerText = '🟢';
                 if(statusText) statusText.innerText = 'المطعم مفتوح ويستقبل الطلبات الآن';
@@ -1488,6 +1510,12 @@
 
             loadMenu();
             renderZoneList();
+
+            // فحص دائم للوقت كل دقيقة لتحديث الشاشة إذا تغيرت ساعات العمل تلقائياً
+            setInterval(() => {
+                updateStoreUI();
+                refreshMenuDisplay();
+            }, 60000);
         });
 
         function renderZoneList() {
@@ -1695,6 +1723,7 @@
             if(el) { document.querySelectorAll('.cat-item').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
             const filtered = menuData.filter(i => i.category === cat);
             const isFixed = isFixedPackageCategory(cat);
+            const openNow = isWorkingHours();
 
             document.getElementById('menuList').innerHTML = filtered.map(item => {
                 let ingredientsElement = item.desc ? `<span class="food-ingredients">${item.desc.trim()}</span>` : "";
@@ -1759,9 +1788,22 @@
                 
                 const itemKey = cleanKey(item.name);
                 const isItemOutOfStock = (itemsStockStatus[itemKey] === 'out');
-                const isDisabled = (!isGlobalStoreOpen || isItemOutOfStock);
 
-                const btnLabel = isDisabled ? "نفدت الكمية 🚫" : "اطلب 🍱";
+                // تحديث تسمية حالة الزر برمز الإغلاق
+                let btnLabel = "اطلب 🍱";
+                let isDisabled = false;
+
+                if (!openNow) {
+                    btnLabel = "مغلق الآن 🔒";
+                    isDisabled = true;
+                } else if (!isGlobalStoreOpen) {
+                    btnLabel = "نفدت الكمية 🚫";
+                    isDisabled = true;
+                } else if (isItemOutOfStock) {
+                    btnLabel = "غير متاح 🚫";
+                    isDisabled = true;
+                }
+
                 const btnClass = isDisabled ? "add-btn out-of-stock-mode" : "add-btn";
                 const disabledAttr = isDisabled ? "disabled" : "";
 
@@ -1800,7 +1842,7 @@
 
         function triggerAddToCart(e, btn, name) {
             const itemKey = cleanKey(name);
-            if (!isGlobalStoreOpen || itemsStockStatus[itemKey] === 'out') return;
+            if (!isWorkingHours() || !isGlobalStoreOpen || itemsStockStatus[itemKey] === 'out') return;
 
             const price = btn.getAttribute('data-price') || "0"; 
             const size = btn.getAttribute('data-size');
@@ -1874,6 +1916,11 @@
         }
 
         function sendToWA() {
+            if (!isWorkingHours()) {
+                alert("عذراً، المطعم مغلق الآن خارج مواعيد العمل الرسمي.");
+                return;
+            }
+
             const n = document.getElementById('uName').value.trim();
             const p = document.getElementById('uPhone').value.trim();
             const a = document.getElementById('uAddr').value.trim();
