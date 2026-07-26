@@ -676,6 +676,11 @@
             font-weight: 900;
             font-size: 0.8rem;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .delete-order-x-btn:active {
+            transform: scale(0.85);
         }
 
         .live-order-header {
@@ -1303,7 +1308,7 @@
             db.ref(`items_stock/${itemKey}`).set(newStatus).catch((err) => alert('حدث خطأ أثناء الحفظ: ' + err.message));
         }
 
-        // عرض طلبات المطبخ اللحظية مع زر حذف ❌
+        // عرض طلبات المطبخ اللحظية مع زر حذف ✕
         function renderLiveKitchenOrders() {
             const container = document.getElementById('liveOrdersContainer');
             if (!container) return;
