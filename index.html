@@ -734,7 +734,10 @@
         let activeChatOrderId = null;
         let chatSenderRole = 'user'; 
         let lastChatCount = 0;
-        let categoryListNames = []; // لتخزين أسماء الأقسام بالترتيب
+        let categoryListNames = []; 
+
+        // التحكم بخلية جهاز صاحب المطعم (Owner Device Detection)
+        let isOwnerDevice = localStorage.getItem('is_mizo_owner') === 'true';
 
         function cleanKey(name) { return name.replace(/[.#$\[\]]/g, "_"); }
 
@@ -804,11 +807,16 @@
             } catch(e){}
         }
 
+        // مراقبة كافة الطلبات الواردة لصاحب المطعم فقط
         db.ref('orders').on('value', (snapshot) => {
             liveOrdersData = snapshot.val() || {};
-            if (initialLoadDone && document.getElementById('adminControlStep').style.display === 'block') {
+            
+            // إذا كان هذا الهاتف مخصص لصاحب المطعم فقط وتم إضافة طلب جديد
+            if (isOwnerDevice && initialLoadDone) {
                 playKitchenBellSound();
+                triggerMobileNotification("طلب جديد 🍣", "وصل طلب جديد في المطبخ الآن!");
             }
+            
             initialLoadDone = true;
             renderLiveKitchenOrders();
         });
@@ -906,9 +914,19 @@
 
         function openAdminModal() {
             document.getElementById('adminModal').style.display = 'flex';
-            document.getElementById('adminLoginStep').style.display = 'block';
-            document.getElementById('adminControlStep').style.display = 'none';
-            document.getElementById('adminPassInput').value = '';
+            
+            // إذا كان هذا الموبايل محدد مسبقاً كجهاز صاحب المطعم، يدخل فوراً للوحة
+            if (isOwnerDevice) {
+                document.getElementById('adminLoginStep').style.display = 'none';
+                document.getElementById('adminControlStep').style.display = 'block';
+                renderAdminItemsList();
+                renderLiveKitchenOrders();
+                loadCurrentHoursToAdminInput();
+            } else {
+                document.getElementById('adminLoginStep').style.display = 'block';
+                document.getElementById('adminControlStep').style.display = 'none';
+                document.getElementById('adminPassInput').value = '';
+            }
         }
 
         function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
@@ -916,11 +934,18 @@
         function checkAdminPass() {
             const input = document.getElementById('adminPassInput').value;
             if (input === SECRET_PIN) {
+                // تسجيل الموبايل كجهاز صاحب المطعم بشكل دائم
+                localStorage.setItem('is_mizo_owner', 'true');
+                isOwnerDevice = true;
+
                 document.getElementById('adminLoginStep').style.display = 'none';
                 document.getElementById('adminControlStep').style.display = 'block';
                 renderAdminItemsList();
                 renderLiveKitchenOrders();
                 loadCurrentHoursToAdminInput();
+                
+                requestNotificationPermission();
+                alert("تم التعرف على هذا الجهاز كـ (صاحب المطعم) بنجاح! ستصلك التنبيهات والأصوات لحظياً 🔔");
             } else {
                 alert('الرقم السري غير صحيح!');
             }
@@ -1033,6 +1058,7 @@
             }
         }
 
+        // تحديث حالة الطلب أوتوماتيكياً في قاعدة البيانات فوراً
         function updateOrderStatus(orderId, newStatus) {
             db.ref(`orders/${orderId}/status`).set(newStatus);
         }
@@ -1108,7 +1134,6 @@
             const themeBtn = document.getElementById('themeToggleBtn');
             if (themeBtn) themeBtn.addEventListener('click', handleThemeToggle);
 
-            requestNotificationPermission();
             setupDirectUserOrderListener();
             loadMenu();
             renderZoneList();
@@ -1184,7 +1209,7 @@
                 processCSVData(data);
 
                 const categories = [...new Set(menuData.map(item => item.category))];
-                categoryListNames = categories; // حفظ أسماء الأقسام بالترتيب
+                categoryListNames = categories; 
 
                 const catImages = categories.map(cat => `${IMAGES_PATH}${cat}.jpg`);
                 const itemImages = menuData.map(item => `${IMAGES_PATH}${item.name}.jpg`);
@@ -1513,10 +1538,8 @@
             if (!selectedZone) { alert("برجاء اضغط لاختيار منطقة التوصيل أولاً."); return; }
             if (!a) { alert("برجاء كتابة عنوانك بالتفصيل."); return; }
 
-            // تحديد أول ثلاثة أقسام بالاسم من القائمة
             const topThreeCategories = categoryListNames.slice(0, 3);
 
-            // حساب عدد القطع في أول ثلاثة أقسام فقط
             let firstThreeCatsPieces = 0;
             cart.forEach(item => {
                 if (topThreeCategories.includes(item.category) && item.pieces && item.pieces > 0) {
@@ -1524,7 +1547,6 @@
                 }
             });
 
-            // تطبيق شرط الحد الأدنى 10 قطع فقط إذا كانت الطلبات من أول 3 أقسام وإجمالي قطعها أقل من 10
             if (firstThreeCatsPieces > 0 && firstThreeCatsPieces < 10) {
                 openMinPiecesModal(firstThreeCatsPieces);
                 return;
