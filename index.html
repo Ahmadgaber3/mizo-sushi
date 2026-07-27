@@ -996,7 +996,7 @@
             <div class="alert-popup-box">
                 <div class="alert-popup-title">تنبيه بالحد الأدنى للطلب ⚠️</div>
                 <div class="alert-popup-desc" id="minPiecesMsgText">
-                    عذراً، الحد الأدنى لطلب القطع هو <b>10 قطع</b>.<br>إجمالي القطع في طلبك حالياً هو <b id="currentPiecesCountText" style="color: var(--brand-red);">0</b> قطعة فقط.
+                    عذراً، الحد الأدنى لطلب القطع من هذا القسم هو <b>10 قطع</b>.<br>إجمالي القطع في طلبك حالياً هو <b id="currentPiecesCountText" style="color: var(--brand-red);">0</b> قطعة فقط.
                 </div>
                 <button class="submit-btn" onclick="closeMinPiecesModal()">فهمت، سأزود القطع 🍣</button>
             </div>
@@ -1147,14 +1147,12 @@
         let activeChatOrderId = null;
         let chatSenderRole = 'user'; 
 
-        // فحص هل المطعم ضمن مواعيد العمل (يومياً من 3:00 م لـ 11:00 م والجمعة إجازة)
         function isWorkingHours() {
             const now = new Date();
-            const day = now.getDay(); // 0 = Sunday, 5 = Friday
-            if (day === 5) return false; // الجمعة إجازة رسمية
+            const day = now.getDay();
+            if (day === 5) return false;
 
-            const hour = now.getHours(); // 0 - 23
-            // من 3 مساءً (15) إلى 11 مساءً (23)
+            const hour = now.getHours();
             return hour >= 15 && hour < 23;
         }
 
@@ -1167,7 +1165,6 @@
             refreshMenuDisplay();
         });
 
-        // الاستماع لمواعيد العمل اللحظية من قاعدة البيانات
         db.ref('work_hours_text').on('value', (snapshot) => {
             const hoursText = snapshot.val() || "مواعيد العمل: يومياً من 3:00 م لـ 11:00 م (الجمعة إجازة)";
             const displayEl = document.getElementById('workHoursDisplay');
@@ -1197,7 +1194,6 @@
             }
         });
 
-        // الاستماع للطلبات اللحظية في المطبخ
         db.ref('orders').on('value', (snapshot) => {
             liveOrdersData = snapshot.val() || {};
             if (initialLoadDone && document.getElementById('adminControlStep').style.display === 'block') {
@@ -1238,7 +1234,6 @@
             } catch(e){}
         }
 
-        // استرجاع وتثبيت حالة الطلب للزبون عند إعادة فتح التطبيق
         function checkAndRestoreUserOrder() {
             const activeOrderId = localStorage.getItem('mizo_active_order_id');
             if (!activeOrderId) return;
@@ -1379,7 +1374,6 @@
             db.ref(`items_stock/${itemKey}`).set(newStatus).catch((err) => alert('حدث خطأ أثناء الحفظ: ' + err.message));
         }
 
-        // عرض طلبات المطبخ اللحظية مع زر حذف ✕
         function renderLiveKitchenOrders() {
             const container = document.getElementById('liveOrdersContainer');
             if (!container) return;
@@ -1425,7 +1419,6 @@
             }).join('');
         }
 
-        // مسح الأوردر من السجل بالكامل
         function deleteOrderFromKitchen(orderId) {
             if (confirm('هل أنت تأكد من حذف هذا الأوردر نهائياً من السجل؟')) {
                 db.ref(`orders/${orderId}`).remove();
@@ -1436,7 +1429,6 @@
             db.ref(`orders/${orderId}/status`).set(newStatus);
         }
 
-        /* ================= نظام الشات اللحظي لكل أوردر ================= */
         function openUserChatModal() {
             const activeOrderId = localStorage.getItem('mizo_active_order_id');
             if (!activeOrderId) return;
@@ -1511,7 +1503,6 @@
             loadMenu();
             renderZoneList();
 
-            // فحص دائم للوقت كل دقيقة لتحديث الشاشة إذا تغيرت ساعات العمل تلقائياً
             setInterval(() => {
                 updateStoreUI();
                 refreshMenuDisplay();
@@ -1789,7 +1780,6 @@
                 const itemKey = cleanKey(item.name);
                 const isItemOutOfStock = (itemsStockStatus[itemKey] === 'out');
 
-                // تحديث تسمية حالة الزر برمز الإغلاق
                 let btnLabel = "اطلب 🍱";
                 let isDisabled = false;
 
@@ -1825,7 +1815,7 @@
                     </div>
                     <div class="card-bottom-content">
                         <div class="btn-wrapper">
-                            <button class="${btnClass}" ${disabledAttr} id="btn-${item.id}" data-price="${initialPrice}" data-size="${initialSize}" data-pieces-num="${piecesNum}" data-sauce-size="${sauceSizeAttr}" data-cook-method="${cookMethodAttr}" onclick="triggerAddToCart(event, this, '${item.name.replace(/'/g, "\\'")}')">
+                            <button class="${btnClass}" ${disabledAttr} id="btn-${item.id}" data-category="${cat}" data-price="${initialPrice}" data-size="${initialSize}" data-pieces-num="${piecesNum}" data-sauce-size="${sauceSizeAttr}" data-cook-method="${cookMethodAttr}" onclick="triggerAddToCart(event, this, '${item.name.replace(/'/g, "\\'")}')">
                                 ${btnLabel}
                             </button>
                         </div>
@@ -1844,6 +1834,7 @@
             const itemKey = cleanKey(name);
             if (!isWorkingHours() || !isGlobalStoreOpen || itemsStockStatus[itemKey] === 'out') return;
 
+            const category = btn.getAttribute('data-category') || "";
             const price = btn.getAttribute('data-price') || "0"; 
             const size = btn.getAttribute('data-size');
             const piecesNum = parseInt(btn.getAttribute('data-pieces-num')) || 0;
@@ -1857,7 +1848,7 @@
 
             let displayName = name + (optionsList.length > 0 ? ` (${optionsList.join(' - ')})` : '');
 
-            cart.push({ name: displayName, price, pieces: piecesNum, img: `${IMAGES_PATH}${name}.jpg` }); 
+            cart.push({ name: displayName, category: category, price: price, pieces: piecesNum, img: `${IMAGES_PATH}${name}.jpg` }); 
             
             btn.classList.add('success-state'); 
             btn.innerText = "تم الإضافة ✔️";
@@ -1930,15 +1921,26 @@
             if (!selectedZone) { alert("برجاء اضغط لاختيار منطقة التوصيل أولاً."); return; }
             if (!a) { alert("برجاء كتابة عنوانك بالتفصيل."); return; }
 
-            let totalPieces = 0;
+            // تحديد أول 3 أقسام في المنيو
+            const allCategories = [...new Set(menuData.map(item => item.category))];
+            const first3Categories = allCategories.slice(0, 3);
+
+            let first3CatsPiecesCount = 0;
+            let hasItemsFromOtherCats = false;
+
             cart.forEach(item => {
-                if (item.pieces && item.pieces > 0) {
-                    totalPieces += item.pieces;
+                if (first3Categories.includes(item.category)) {
+                    if (item.pieces && item.pieces > 0) {
+                        first3CatsPiecesCount += item.pieces;
+                    }
+                } else {
+                    hasItemsFromOtherCats = true;
                 }
             });
 
-            if (totalPieces < 10) {
-                openMinPiecesModal(totalPieces);
+            // تطبيق التنبيه فقط إذا كان الطلب يتكون من أول 3 أقسام فقط ومجموع قطعها أقل من 10
+            if (!hasItemsFromOtherCats && first3CatsPiecesCount < 10) {
+                openMinPiecesModal(first3CatsPiecesCount);
                 return;
             }
 
@@ -1949,7 +1951,6 @@
                 summaryArr.push({ name: itemKey, qty: qty });
             }
 
-            // حفظ الطلب في Firebase
             const newOrderRef = db.ref('orders').push();
             const orderId = newOrderRef.key;
 
@@ -1967,7 +1968,6 @@
                 timestamp: Date.now()
             });
 
-            // حفظ كود الطلب في LocalStorage
             localStorage.setItem('mizo_active_order_id', orderId);
 
             let msg = `*طلب جديد - Mizo Sushi 🍣*\n──────────────\n`;
