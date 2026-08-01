@@ -1134,7 +1134,6 @@
 
         let menuData = [], cart = [];
         let itemPieceCounts = {}; 
-        let itemSelectedSauceSize = {};
         let itemSelectedCookMethod = {};
         let currentTotal = 0; 
         let currentSubtotal = 0;
@@ -1640,13 +1639,7 @@
         function isFixedPackageCategory(catName) {
             if (!catName) return false;
             const normalized = catName.trim().toLowerCase();
-            return normalized.includes("mizo diamond") || normalized.includes("دايموند") || normalized.includes("بوكس") || normalized.includes("توفير") || normalized.includes("سبيشال") || normalized.includes("جولد") || normalized.includes("عرض") || normalized.includes("عروض") || normalized.includes("burger") || normalized.includes("برجر") || normalized.includes("burrito") || normalized.includes("noodles") || normalized.includes("dumplings") || normalized.includes("صوص");
-        }
-
-        function isSauceCategory(catName, itemName) {
-            const cat = catName ? catName.trim().toLowerCase() : "";
-            const item = itemName ? itemName.trim().toLowerCase() : "";
-            return cat.includes("صوص") || item.includes("صوص") || item.includes("sauce");
+            return normalized.includes("mizo diamond") || normalized.includes("دايموند") || normalized.includes("بوكس") || normalized.includes("توفير") || normalized.includes("سبيشال") || normalized.includes("جولد") || normalized.includes("عرض") || normalized.includes("عروض") || normalized.includes("burger") || normalized.includes("برجر") || normalized.includes("burrito") || normalized.includes("noodles") || normalized.includes("dumplings");
         }
 
         function isMizoBoxCategory(catName, itemName) {
@@ -1676,25 +1669,6 @@
             }
         }
 
-        function setSauceSize(itemId, size, price) {
-            itemSelectedSauceSize[itemId] = { size, price };
-            const priceNumEl = document.getElementById(`price-num-${itemId}`);
-            const actionBtn = document.getElementById(`btn-${itemId}`);
-            
-            if (priceNumEl) priceNumEl.innerText = price;
-            if (actionBtn) {
-                actionBtn.setAttribute('data-price', price);
-                actionBtn.setAttribute('data-sauce-size', size);
-            }
-
-            const card = document.getElementById(`card-${itemId}`);
-            if (card) {
-                card.querySelectorAll('.sauce-opt-btn').forEach(btn => {
-                    btn.classList.toggle('active', btn.getAttribute('data-size') === size);
-                });
-            }
-        }
-
         function setCookMethod(itemId, method) {
             itemSelectedCookMethod[itemId] = method;
             const actionBtn = document.getElementById(`btn-${itemId}`);
@@ -1719,26 +1693,12 @@
             document.getElementById('menuList').innerHTML = filtered.map(item => {
                 let ingredientsElement = item.desc ? `<span class="food-ingredients">${item.desc.trim()}</span>` : "";
 
-                const isSauce = isSauceCategory(cat, item.name);
                 const isMizoBox = isMizoBoxCategory(cat, item.name);
 
                 let pieceSelectorHtml = "";
                 let customOptionsHtml = "";
 
-                if (isSauce) {
-                    if (!itemSelectedSauceSize[item.id]) {
-                        itemSelectedSauceSize[item.id] = { size: "صغير", price: 5 };
-                    }
-                    const currentSauce = itemSelectedSauceSize[item.id];
-                    customOptionsHtml = `
-                    <div class="custom-options-container">
-                        <span class="option-title">الحجم:</span>
-                        <div class="simple-option-pills">
-                            <button type="button" class="simple-pill-btn sauce-opt-btn ${currentSauce.size === 'صغير' ? 'active' : ''}" data-size="صغير" onclick="setSauceSize(${item.id}, 'صغير', 5)">صغير (5 ج)</button>
-                            <button type="button" class="simple-pill-btn sauce-opt-btn ${currentSauce.size === 'كبير' ? 'active' : ''}" data-size="كبير" onclick="setSauceSize(${item.id}, 'كبير', 10)">كبير (10 ج)</button>
-                        </div>
-                    </div>`;
-                } else if (!isFixed) {
+                if (!isFixed) {
                     if (!itemPieceCounts[item.id]) itemPieceCounts[item.id] = 1;
                     const currentCnt = itemPieceCounts[item.id];
                     pieceSelectorHtml = `
@@ -1768,14 +1728,12 @@
                 const currentCount = itemPieceCounts[item.id] || 1;
                 let initialPrice = item.price;
 
-                if (isSauce) {
-                    initialPrice = itemSelectedSauceSize[item.id] ? itemSelectedSauceSize[item.id].price : 5;
-                } else if (!isFixed) {
+                if (!isFixed) {
                     initialPrice = item.price * currentCount;
                 }
 
-                const initialSize = !isFixed && !isSauce ? `${currentCount} قطعة` : '';
-                const piecesNum = !isFixed && !isSauce ? currentCount : 0;
+                const initialSize = !isFixed ? `${currentCount} قطعة` : '';
+                const piecesNum = !isFixed ? currentCount : 0;
                 
                 const itemKey = cleanKey(item.name);
                 const isItemOutOfStock = (itemsStockStatus[itemKey] === 'out');
@@ -1797,7 +1755,6 @@
                 const btnClass = isDisabled ? "add-btn out-of-stock-mode" : "add-btn";
                 const disabledAttr = isDisabled ? "disabled" : "";
 
-                const sauceSizeAttr = isSauce ? (itemSelectedSauceSize[item.id] ? itemSelectedSauceSize[item.id].size : "صغير") : "";
                 const cookMethodAttr = isMizoBox ? (itemSelectedCookMethod[item.id] || "رو") : "";
 
                 return `
@@ -1815,7 +1772,7 @@
                     </div>
                     <div class="card-bottom-content">
                         <div class="btn-wrapper">
-                            <button class="${btnClass}" ${disabledAttr} id="btn-${item.id}" data-category="${cat}" data-price="${initialPrice}" data-size="${initialSize}" data-pieces-num="${piecesNum}" data-sauce-size="${sauceSizeAttr}" data-cook-method="${cookMethodAttr}" onclick="triggerAddToCart(event, this, '${item.name.replace(/'/g, "\\'")}')">
+                            <button class="${btnClass}" ${disabledAttr} id="btn-${item.id}" data-category="${cat}" data-price="${initialPrice}" data-size="${initialSize}" data-pieces-num="${piecesNum}" data-cook-method="${cookMethodAttr}" onclick="triggerAddToCart(event, this, '${item.name.replace(/'/g, "\\'")}')">
                                 ${btnLabel}
                             </button>
                         </div>
@@ -1838,11 +1795,9 @@
             const price = btn.getAttribute('data-price') || "0"; 
             const size = btn.getAttribute('data-size');
             const piecesNum = parseInt(btn.getAttribute('data-pieces-num')) || 0;
-            const sauceSize = btn.getAttribute('data-sauce-size');
             const cookMethod = btn.getAttribute('data-cook-method');
 
             let optionsList = [];
-            if (sauceSize) optionsList.push(`حجم ${sauceSize}`);
             if (size) optionsList.push(size);
             if (cookMethod) optionsList.push(`طهي: ${cookMethod}`);
 
