@@ -1695,20 +1695,17 @@
 
                 const isMizoBox = isMizoBoxCategory(cat, item.name);
 
-                let pieceSelectorHtml = "";
+                // العداد الآن مفعل لكافة الأقسام بدون استثناء
+                if (!itemPieceCounts[item.id]) itemPieceCounts[item.id] = 1;
+                const currentCnt = itemPieceCounts[item.id];
+                const pieceSelectorHtml = `
+                <div class="piece-counter-box">
+                    <button type="button" class="piece-btn" onclick="changePieceCount(${item.id}, ${item.price}, -1)">-</button>
+                    <span class="piece-count-text" id="piece-cnt-${item.id}">${currentCnt} قطعة</span>
+                    <button type="button" class="piece-btn" onclick="changePieceCount(${item.id}, ${item.price}, 1)">+</button>
+                </div>`;
+
                 let customOptionsHtml = "";
-
-                if (!isFixed) {
-                    if (!itemPieceCounts[item.id]) itemPieceCounts[item.id] = 1;
-                    const currentCnt = itemPieceCounts[item.id];
-                    pieceSelectorHtml = `
-                    <div class="piece-counter-box">
-                        <button type="button" class="piece-btn" onclick="changePieceCount(${item.id}, ${item.price}, -1)">-</button>
-                        <span class="piece-count-text" id="piece-cnt-${item.id}">${currentCnt} قطعة</span>
-                        <button type="button" class="piece-btn" onclick="changePieceCount(${item.id}, ${item.price}, 1)">+</button>
-                    </div>`;
-                }
-
                 if (isMizoBox) {
                     if (!itemSelectedCookMethod[item.id]) {
                         itemSelectedCookMethod[item.id] = "رو";
@@ -1726,14 +1723,9 @@
                 }
 
                 const currentCount = itemPieceCounts[item.id] || 1;
-                let initialPrice = item.price;
-
-                if (!isFixed) {
-                    initialPrice = item.price * currentCount;
-                }
-
-                const initialSize = !isFixed ? `${currentCount} قطعة` : '';
-                const piecesNum = !isFixed ? currentCount : 0;
+                const initialPrice = item.price * currentCount;
+                const initialSize = `${currentCount} قطعة`;
+                const piecesNum = currentCount;
                 
                 const itemKey = cleanKey(item.name);
                 const isItemOutOfStock = (itemsStockStatus[itemKey] === 'out');
@@ -1783,7 +1775,7 @@
                             </span>
                         </div>
                     </div>
-                </div>`
+                </div>`;
             }).join('');
         }
 
@@ -1876,7 +1868,6 @@
             if (!selectedZone) { alert("برجاء اضغط لاختيار منطقة التوصيل أولاً."); return; }
             if (!a) { alert("برجاء كتابة عنوانك بالتفصيل."); return; }
 
-            // تحديد أول 3 أقسام في المنيو
             const allCategories = [...new Set(menuData.map(item => item.category))];
             const first3Categories = allCategories.slice(0, 3);
 
@@ -1893,7 +1884,6 @@
                 }
             });
 
-            // تطبيق التنبيه فقط إذا كان الطلب يتكون من أول 3 أقسام فقط ومجموع قطعها أقل من 10
             if (!hasItemsFromOtherCats && first3CatsPiecesCount < 10) {
                 openMinPiecesModal(first3CatsPiecesCount);
                 return;
@@ -1945,6 +1935,13 @@
             toggleCart(false);
             window.open(`https://wa.me/201556620644?text=${encodeURIComponent(msg)}`, '_blank');
         }
+
+        window.addEventListener('popstate', (e) => {
+            const modal = document.getElementById('cartModal');
+            if (modal && modal.style.display === 'flex') {
+                modal.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
